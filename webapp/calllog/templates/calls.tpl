@@ -11,12 +11,12 @@
 			<table class="table table-striped table-condensed">
 				<thead>
 					<tr>
-						<th><a href="?sort_by=call_updated{if $type == 'asc' && $active == 1}&type=desc{else}&type=asc{/if}&active=1" title="Activity">{icon id=clock size=tiny flat=true}</a></th>
-						<th><a href="?sort_by=call_date{if $type == 'asc' && $active == 2}&type=desc{else}&type=asc{/if}&active=2">Ticket</a></th>
-						<th><a href="?sort_by=caller_last_name{if $type == 'asc' && $active == 3}&type=desc{else}&type=asc{/if}&active=3">Caller</a></th>
-						<th><a href="?sort_by=call_priority{if $type == 'asc' && $active == 4}&type=desc{else}&type=asc{/if}&active=4">Priority</a> /
-						<a href="?sort_by=call_state{if $type == 'asc' && $active == 5}&type=desc{else}&type=asc{/if}&active=5">State</a></th>
-						<th><a href="?sort_by=its_assigned_group {if $type == 'asc' && $active == 6}DESC{else}ASC{/if}, tlc_assigned_to{if $type == 'asc'}&type=desc{else}&type=asc{/if}&active=6">Assigned To</a></th>
+						<th><a href="?sort_by=call_updated{if $type == 'asc' && $active == 1}&type=desc{else}&type=asc{/if}&active=1" title="Activity">{icon id=clock size=tiny flat=true}{if $active == 1 && $type == 'asc'}&uarr;{elseif $active == 1 && $type == 'desc'}&darr;{/if}</a></th>
+						<th><a href="?sort_by=call_date{if $type == 'asc' && $active == 2}&type=desc{else}&type=asc{/if}&active=2">Ticket{if $active == 2 && $type == 'asc'}&uarr;{elseif $active == 2 && $type == 'desc'}&darr;{/if}</a></th>
+						<th><a href="?sort_by=caller_last_name{if $type == 'asc' && $active == 3}&type=desc{else}&type=asc{/if}&active=3">Caller{if $active == 3 && $type == 'asc'}&uarr;{elseif $active == 3 && $type == 'desc'}&darr;{/if}</a></th>
+						<th><a href="?sort_by=call_priority{if $type == 'asc' && $active == 4}&type=desc{else}&type=asc{/if}&active=4">Priority{if $active == 4 && $type == 'asc'}&uarr;{elseif $active == 4 && $type == 'desc'}&darr;{/if}</a> /
+						<a href="?sort_by=call_state{if $type == 'asc' && $active == 5}&type=desc{else}&type=asc{/if}&active=5">State{if $active == 5 && $type == 'asc'}&uarr;{elseif $active == 5 && $type == 'desc'}&darr;{/if}</a></th>
+						<th><a href="?sort_by=its_assigned_group {if $type == 'asc' && $active == 6}DESC{else}ASC{/if}, tlc_assigned_to{if $type == 'asc'}&type=desc{else}&type=asc{/if}&active=6">Assigned To{if $active == 6 && $type == 'asc'}&uarr;{elseif $active == 6 && $type == 'desc'}&darr;{/if}</a></th>
 					</tr>
 				</thead>
 				<tbody>
