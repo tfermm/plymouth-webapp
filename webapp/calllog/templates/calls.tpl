@@ -11,12 +11,12 @@
 			<table class="table table-striped table-condensed">
 				<thead>
 					<tr>
-						<th><a href="?sort_by=call_updated" title="Activity">{icon id=clock size=tiny flat=true}</a></th>
-						<th><a href="?sort_by=call_date">Ticket</a></th>
-						<th><a href="?sort_by=caller_last_name">Caller</a></th>
-						<th><a href="?sort_by=call_priority">Priority</a> /
-						<a href="?sort_by=call_state">State</a></th>
-						<th><a href="?sort_by=its_assigned_group ASC, tlc_assigned_to">Assigned To</a></th>
+						<th><a href="?sort_by=call_updated{if $type == 'asc' && $active == 1}&type=desc{else}&type=asc{/if}&active=1" title="Activity">{icon id=clock size=tiny flat=true}</a></th>
+						<th><a href="?sort_by=call_date{if $type == 'asc' && $active == 2}&type=desc{else}&type=asc{/if}&active=2">Ticket</a></th>
+						<th><a href="?sort_by=caller_last_name{if $type == 'asc' && $active == 3}&type=desc{else}&type=asc{/if}&active=3">Caller</a></th>
+						<th><a href="?sort_by=call_priority{if $type == 'asc' && $active == 4}&type=desc{else}&type=asc{/if}&active=4">Priority</a> /
+						<a href="?sort_by=call_state{if $type == 'asc' && $active == 5}&type=desc{else}&type=asc{/if}&active=5">State</a></th>
+						<th><a href="?sort_by=its_assigned_group {if $type == 'asc' && $active == 6}DESC{else}ASC{/if}, tlc_assigned_to{if $type == 'asc'}&type=desc{else}&type=asc{/if}&active=6">Assigned To</a></th>
 					</tr>
 				</thead>
 				<tbody>

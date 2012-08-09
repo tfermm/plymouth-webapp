@@ -31,6 +31,8 @@ function getOpenCalls( $options = array() ) {
 			call_updated - when the call was last updated
 	*/
 	
+	$type = $_GET['type'];
+
 	$options['what'] = $options['what'] ?: '*';
 	
 	$query = "SELECT {$options['what']} 
@@ -99,10 +101,17 @@ function getOpenCalls( $options = array() ) {
 		$options['sort_by'] = 'date_assigned, time_assigned';
 	}
 
-	$query .= " ORDER BY {$options['sort_by']} ASC";
-	
+	if ($type == 'asc'){
+		$query .= " ORDER BY {$options['sort_by']} ASC";
+	} 
+	else if ($type == 'desc'){
+		$query .= " ORDER BY {$options['sort_by']} DESC";
+	}
+	else{
+		$query .= " ORDER BY {$options['sort_by']} ASC";
+	}
 	$calls =  PSU::db('calllog')->GetAll($query);
-	
+
 	foreach( $calls as &$call ) {
 		// needed for the template, but a bit redundant
 		$call['call_title'] = $call['title'];

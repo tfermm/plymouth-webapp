@@ -77,6 +77,11 @@ if( !empty($calls) && is_array($calls) ){
 	$tpl->assign('average_open_call_time', $average_string);
 }
 
+$sort_type = $_GET['type'];
+$active = $_GET['active'];
+
+$tpl->assign('active', $active);
+$tpl->assign('type', $sort_type);
 $tpl->assign('open_call_type', $_GET['open_call_type']);
 $tpl->assign('find_type', $find_type);
 $tpl->assign('find_in', $find_in);
