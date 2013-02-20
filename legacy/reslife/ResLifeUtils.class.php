@@ -27,6 +27,7 @@ class ResLifeUtils
  *	This is suitable for usage in drop down select lists as is.
  */
 	protected $oncampushousing = array(
+		''=>'',
 		'BE'=>'Belknap',
 		'BL'=>'Blair',
 		'HI'=>'Eco House',
