@@ -11,6 +11,7 @@ class PasswordManager
 
 	public static $INSERTED = 1;
 	public static $UPDATED = 2;
+	public static $EXPIRATION = 180;
 
 	public $table = array(
 		'expirations' => 'password_expiration',
@@ -234,6 +235,58 @@ class PasswordManager
 
 		PSU::db('myplymouth')->Execute( $sql, $args );
 	}//end logPassword	
+
+	/**
+	 * notifyUser
+	 *
+	 * Function to notify users on set days of impending password 
+	 * expiration.
+	 *
+	 * @param string $username The user to email
+	 * @param int $age Current age of the user's password
+	 * @param int $expiration The age at which password will expire
+	 * @param bool $email Email the user as part of notification
+	 * @return mixed
+	 */
+	public function notifyUser( $username, $age = NULL, $expiration = NULL, $email = FALSE) {
+
+		$age = $age ?: $this->passwordAge( $username );
+		$expiration = $expiration ?: self::EXPIRATION;
+		$diff = $expiration - $age;
+
+		switch( $diff ) {
+			case ( $diff <= 30 ):
+				$portal = TRUE;
+			case 10:
+				$send = 10;
+				break;
+			case 5:
+				$send = 5;
+				break;
+			case 1:
+				$send = 1;
+				break;
+		}//end switch
+
+		/**
+		 * If the user is within the ten day limit, and has hit any of the 
+		 * "landmarks", email them.
+		 */
+		if( $diff <= 10 && $send &&e $email ) {
+			return PSU::email();
+		}//end if
+
+		/**
+		 * If the password is within the portal notification period, let the 
+		 * user know be returning some information here.
+		 */
+		if( $portal ) {
+			return $diff;
+		}//end if
+
+		//Hopefully really never hitting this...
+		return FALSE;
+	}//end notifyUser
 
 	/**
 	 * setADPassword
