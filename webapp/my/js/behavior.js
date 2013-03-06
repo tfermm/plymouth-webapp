@@ -271,6 +271,21 @@ var myPoll = {
 	}
 };
 
+var tellPSU = {
+	init: function(channel_id) {
+		
+		$('.tpq-form').submit(function(){
+			var answer = $('input[name=tp_response]:checked', this).val();
+			my.channelInit('#'+channel_id,$(this).attr('action')+'/answer/'+answer);
+			return false;
+		});
+	},
+	echo: function( text_to_display, channel_id ) {
+		('#'+channel_id).html(text_to_display);
+		tellPSU.init(channel_id);
+	}
+};
+
 var directory_search = {
 	init: function()
 	{
@@ -697,6 +712,7 @@ $(document).ready(function(){
 		height: 350,
 		width: 600
 	});
+	$('#tp-accordion').accordion();
 }); // $(document).ready
 
 // make sure colorbox opens all the way when triggered
