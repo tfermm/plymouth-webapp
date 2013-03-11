@@ -64,7 +64,7 @@ class Applicant {
 		";
 
 		$pidm = PSU::db('banner')->GetOne( $sql, array( 'aidm' => $aidm ) );
-		return ( is_numeric( $pidm ) ? $pidm : FALSE;
+		return ( is_numeric( $pidm ) ) ? $pidm : FALSE;
 	}//end 
 
 	public function load() {
