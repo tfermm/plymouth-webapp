@@ -38,7 +38,7 @@ class Applicant {
 		$func = '_load_' . $key;
 		if( method_exists( $this, $func ) ) {
 			return $this->$func();
-		} elseif( in_array( $key , array_keys( $loaders ) ) ) {
+		} elseif( in_array( $key , array_keys( $this->loaders ) ) ) {
 			$func = '_load_' . $loaders[ $key ];
 			$this->$func();
 			return $this->data[ $key ];
