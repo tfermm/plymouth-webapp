@@ -97,7 +97,7 @@ class Applicant {
 		return $this->data['address'];
 	}//end function
 
-	publc function _load_person() {
+	public function _load_person() {
 		$sql = "
 			SELECT sarpers_first_name AS first_name,
 						 sarpers_middle_name1 || ' ' ||sarmers_middle_name2 AS middle_name,
