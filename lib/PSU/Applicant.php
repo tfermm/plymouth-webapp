@@ -126,7 +126,7 @@ class Applicant {
 			'aidm' => $this->aidm,
 		);
 
-		$this->data[ 'application_number' ] = \PSU::db('banner')->GetOne( $sql, $aidm ) );
+		$this->data[ 'application_number' ] = \PSU::db('banner')->GetOne( $sql, $args );
 	}//end function
 
 }//end class
