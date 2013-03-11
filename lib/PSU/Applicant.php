@@ -6,8 +6,8 @@ class Applicant {
 
 	public $data = array();
 	public $loaders = array(
-		'address' => 'addresses'
-		'addresses' => 'addresses'
+		'address' => 'addresses',
+		'addresses' => 'addresses',
 		'first_name' => 'person',
 		'last_name' => 'person',
 		'middle_name' => 'person',
