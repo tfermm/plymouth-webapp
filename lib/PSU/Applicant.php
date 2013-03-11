@@ -20,7 +20,7 @@ class Applicant {
 		 * PSUPerson object as that will be much more robust as an 
 		 * information source.
 		 */
-		if( $pidm = $this->has_pidm( $aidm ) {
+		if( $pidm = $this->has_pidm( $aidm ) ) {
 			return new \PSUPerson( $pidm );
 		}//end if
 
