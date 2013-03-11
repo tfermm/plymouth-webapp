@@ -63,7 +63,7 @@ class Applicant {
 			 WHERE sarctrl_aidm = :aidm
 		";
 
-		$pidm = PSU::db('banner')->GetOne( $sql, array( 'aidm' => $aidm ) );
+		$pidm = \PSU::db('banner')->GetOne( $sql, array( 'aidm' => $aidm ) );
 		return ( is_numeric( $pidm ) ) ? $pidm : FALSE;
 	}//end 
 
