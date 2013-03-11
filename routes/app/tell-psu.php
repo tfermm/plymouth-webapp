@@ -66,20 +66,24 @@ respond( function( $request, $response, $app ) {
 	$app->tpl->assign( 'back_url', $_SERVER['HTTP_REFERER'] );
 });
 
-//
-// Nothing specific requested; show list of gatesystems
-//
+/**
+ * Show the user what they answered if they navigate here directly
+ */
+respond('GET','/answer/[:question]/[:response]/?[*]?', function( $request, $response, $app ) {
+	
+	$app->tp->respond( $request->param('question'), $request->param('response') );
+});
+
+respond('POST','/answer/[:question]/?', function( $request, $response, $app ) {
+	$app->tp->respond( $request->param('question'), $_POST['tp_response'] );
+	\PSU::redirect($GLOBALS['BASE_URL']);
+});
+
 respond( 'GET', '/', function( $request, $response, $app ) {
-	//PSU::dbug( $app->user->portal_roles);
-	//PSU::db('myplymouth')->debug = true;
-	foreach( $app->tp->questions() as $question) {
-		//var_dump( $question->user_response( $app->user->wp_id ) );
-		foreach( $question->responses() as $response ) {
-		}//end foerach
-	}//end foreach
+});
+
+respond( '[*]', function( $request, $response, $app ) {
 	$app->tpl->assign( 'questions', $app->tp->questions() );
 	$app->tpl->display( 'index.tpl' );
 });
 
-//with( '/admininister', __DIR__ . '/tell-psu/administer.php' );
-with( '/answer', __DIR__ . '/tell-psu/answer.php' );
