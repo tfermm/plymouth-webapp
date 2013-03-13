@@ -272,7 +272,7 @@ class PasswordManager
 		 * If the user is within the ten day limit, and has hit any of the 
 		 * "landmarks", email them.
 		 */
-		if( $diff <= 10 && $send &&e $email ) {
+		if( $diff <= 10 && $send && $email ) {
 			return PSU::email();
 		}//end if
 
