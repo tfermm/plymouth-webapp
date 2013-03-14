@@ -281,7 +281,7 @@ class PasswordManager
 					According to the Plymouth State University  <a href="http://www.plymouth.edu/office/information-technology/about/policy/user-credentials/" target="_blank">User Credentials Policy</a>,  all University employees are required to change their password at least every 180 days.  It has been ' . $age . ' days since you last changed your password. This is your official notification that, <strong>your myPlymouth Password will expire in ' . $diff . ' days.</strong>
 				</p>
 				<p>
-					It is important to note that there only three ways to <a href="http://go.plymouth.edu/password" target="_blank">change your PSU password</a>.  The first method is via the <strong><em><a href="http://go.plymouth.edu/password" target="_blank">Change Password</a></em></strong> link in myPlymouth and the second method is via the <strong><em>What is my Password</em></strong> link on the myPlymouth logon page.  The third option is via an 'in person' visit to the Help Desk located at the main desk in Lamson Library. Each of these processes requires that <strong>you</strong> initiate the action.  PSU will never ask you to reset your password by clicking on a link in an email.  Requests for password information sent via email should always be suspect and are considered Phishing.
+					It is important to note that there only three ways to <a href="http://go.plymouth.edu/password" target="_blank">change your PSU password</a>.  The first method is via the <strong><em><a href="http://go.plymouth.edu/password" target="_blank">Change Password</a></em></strong> link in myPlymouth and the second method is via the <strong><em>What is my Password</em></strong> link on the myPlymouth logon page.  The third option is via an \'in person\' visit to the Help Desk located at the main desk in Lamson Library. Each of these processes requires that <strong>you</strong> initiate the action.  PSU will never ask you to reset your password by clicking on a link in an email.  Requests for password information sent via email should always be suspect and are considered Phishing.
 				</p>
 				<p>
 					Need help changing your password and ensuring that your computer and all your other devices and applications remain working?   Please do not hesitate to contact the Help Desk.  We are always happy to help!  You might also visit the Help Desk Wiki for the <a href="http://www.plymouth.edu/webapp/helpdesk/wiki/Changed_your_password:_Other_things_to_bear_in_mind" target="_blank">Changed Your Password: Other things to bear in mind</a> checklist.
@@ -295,7 +295,7 @@ class PasswordManager
 				<p>Submit a <a href="http://go.plymouth.edu/support" target="_blank">Support Ticket</a> or check the Status of an Existing Request (requires authentication with your myPlymouth username and password)</p>
 			';
 			$headers = array('Content-type' => 'text/html');
-			return PSU::email( $to, $subject, $message, $headers );
+			return PSU::mail( $to, $subject, $message, $headers );
 		}//end if
 
 		/**
