@@ -6,8 +6,8 @@ class Applicant {
 
 	public $data = array();
 	public $loaders = array(
-		'address' => 'addresses'
-		'addresses' => 'addresses'
+		'address' => 'addresses',
+		'addresses' => 'addresses',
 		'first_name' => 'person',
 		'last_name' => 'person',
 		'middle_name' => 'person',
@@ -20,7 +20,7 @@ class Applicant {
 		 * PSUPerson object as that will be much more robust as an 
 		 * information source.
 		 */
-		if( $pidm = $this->has_pidm( $aidm ) {
+		if( $pidm = $this->has_pidm( $aidm ) ) {
 			return new \PSUPerson( $pidm );
 		}//end if
 
@@ -31,15 +31,15 @@ class Applicant {
 
 	public function &__get( $key ) {
 
-		if( isset( $this->data[ $key ] ) {
+		if( isset( $this->data[ $key ] ) ) {
 			return $this->data[ $key ];
 		}//end if
 
 		$func = '_load_' . $key;
 		if( method_exists( $this, $func ) ) {
 			return $this->$func();
-		} elseif( in_array( $key , array_keys( $loaders ) ) ) {
-			$func = '_load_' . $loaders[ $key ];
+		} elseif( in_array( $key , array_keys( $this->loaders ) ) ) {
+			$func = '_load_' . $this->loaders[ $key ];
 			$this->$func();
 			return $this->data[ $key ];
 		}//end elseif
@@ -63,8 +63,8 @@ class Applicant {
 			 WHERE sarctrl_aidm = :aidm
 		";
 
-		$pidm = PSU::db('banner')->GetOne( $sql, array( 'aidm' => $aidm ) );
-		return ( is_numeric( $pidm ) ? $pidm : FALSE;
+		$pidm = \PSU::db('banner')->GetOne( $sql, array( 'aidm' => $aidm ) );
+		return ( is_numeric( $pidm ) ) ? $pidm : FALSE;
 	}//end 
 
 	public function load() {
@@ -97,7 +97,7 @@ class Applicant {
 		return $this->data['address'];
 	}//end function
 
-	publc function _load_person() {
+	public function _load_person() {
 		$sql = "
 			SELECT sarpers_first_name AS first_name,
 						 sarpers_middle_name1 || ' ' ||sarmers_middle_name2 AS middle_name,
@@ -126,7 +126,7 @@ class Applicant {
 			'aidm' => $this->aidm,
 		);
 
-		$this->data[ 'application_number' ] = \PSU::db('banner')->GetOne( $sql, $aidm ) );
+		$this->data[ 'application_number' ] = \PSU::db('banner')->GetOne( $sql, $args );
 	}//end function
 
 }//end class
