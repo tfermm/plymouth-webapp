@@ -287,9 +287,9 @@ class MyPortal extends MyMagicGetters {
 				'days' => round( ( time() - $ad_stamp )/60/60/24 ),
 			);
 
-			if( $this->password_info['days'] > 160 ) {
+			if( $this->password_info['days'] > 170 ) {
 				$this->password_info['class'] = 'password-alarm';
-			} elseif( $this->password_info['days'] > 120 ) {
+			} elseif( $this->password_info['days'] > 150 ) {
 				$this->password_info['class'] = 'password-warning';
 			}//end elseif
 		}//end if
