@@ -251,8 +251,9 @@ class PasswordManager
 	public function notifyUser( $username, $age = NULL, $expiration = NULL, $email = FALSE) {
 
 		$age = $age ?: $this->passwordAge( $username );
-		$expiration = $expiration ?: self::EXPIRATION;
+		$expiration = $expiration ?: self::$EXPIRATION;
 		$diff = $expiration - $age;
+		$diff = ( $diff < 0 ) ? 0 : $diff;
 
 		switch( $diff ) {
 			case ( $diff <= 30 ):
@@ -273,7 +274,28 @@ class PasswordManager
 		 * "landmarks", email them.
 		 */
 		if( $diff <= 15 && $send && $email ) {
-			return PSU::email();
+			$to = $username . '@plymouth.edu';
+			$subject = 'Important - Your myPlymouth Password will expire in ' . $diff . ' days';
+			$message = '
+				<p>
+					According to the Plymouth State University  <a href="http://www.plymouth.edu/office/information-technology/about/policy/user-credentials/" target="_blank">User Credentials Policy</a>,  all University employees are required to change their password at least every 180 days.  It has been ' . $age . ' days since you last changed your password. This is your official notification that, <strong>your myPlymouth Password will expire in ' . $diff . ' days.</strong>
+				</p>
+				<p>
+					It is important to note that there only three ways to <a href="http://go.plymouth.edu/password" target="_blank">change your PSU password</a>.  The first method is via the <strong><em><a href="http://go.plymouth.edu/password" target="_blank">Change Password</a></em></strong> link in myPlymouth and the second method is via the <strong><em>What is my Password</em></strong> link on the myPlymouth logon page.  The third option is via an \'in person\' visit to the Help Desk located at the main desk in Lamson Library. Each of these processes requires that <strong>you</strong> initiate the action.  PSU will never ask you to reset your password by clicking on a link in an email.  Requests for password information sent via email should always be suspect and are considered Phishing.
+				</p>
+				<p>
+					Need help changing your password and ensuring that your computer and all your other devices and applications remain working?   Please do not hesitate to contact the Help Desk.  We are always happy to help!  You might also visit the Help Desk Wiki for the <a href="http://www.plymouth.edu/webapp/helpdesk/wiki/Changed_your_password:_Other_things_to_bear_in_mind" target="_blank">Changed Your Password: Other things to bear in mind</a> checklist.
+				</p>
+				<hr />
+				<p><strong>Information Technology Services</strong></p>
+				<p>Phone: (603) 535-2929</p>
+				<p>Email: <a href="mailto:helpdesk@plymouth.edu">helpdesk@plymouth.edu</a></p>
+				<p>Chat on-line:  <a href="http://go.plymouth.edu/livechat-helpdesk" target="_blank">Chat with ITS</a></p>
+				<p>Visit in person at the main Information Desk in Lamson Library</a>
+				<p>Submit a <a href="http://go.plymouth.edu/support" target="_blank">Support Ticket</a> or check the Status of an Existing Request (requires authentication with your myPlymouth username and password)</p>
+			';
+			$headers = array('Content-type' => 'text/html');
+			return PSU::mail( $to, $subject, $message, $headers );
 		}//end if
 
 		/**
