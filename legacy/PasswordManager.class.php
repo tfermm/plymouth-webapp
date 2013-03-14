@@ -251,7 +251,7 @@ class PasswordManager
 	public function notifyUser( $username, $age = NULL, $expiration = NULL, $email = FALSE) {
 
 		$age = $age ?: $this->passwordAge( $username );
-		$expiration = $expiration ?: self::EXPIRATION;
+		$expiration = $expiration ?: self::$EXPIRATION;
 		$diff = $expiration - $age;
 		$diff = ( $diff < 0 ) ? 0 : $diff;
 
