@@ -47,8 +47,8 @@ class ETransOLApp extends ETrans {
 		 * they already exist, otherwise we use the aidm as confirmed to 
 		 * exist by the successful creation of an applicant object.
 		 */
-		$applicant = new PSU\Applicant( $aidm );
-		$applicant_id = ($applicant instanceof PSU\Person) ? $applicant->pidm : $applicant->aidm;
+		$applicant = PSU\Applicant::get( $aidm );
+		$applicant_id = ($applicant instanceof \PSUPerson) ? $applicant->pidm : $applicant->aidm;
 
 		if( !$applicant_id ) {
 			throw new Exception( 'Could not find any information attached to AIDM "' . $aidm .'"' );

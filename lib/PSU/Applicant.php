@@ -15,15 +15,6 @@ class Applicant {
 
 	public function __construct( $aidm, $app_seqno = FALSE ) {
 
-		/**
-		 * If this aidm already has a pidm assigned, bail and pass back the 
-		 * PSUPerson object as that will be much more robust as an 
-		 * information source.
-		 */
-		if( $pidm = $this->has_pidm( $aidm ) ) {
-			return new \PSUPerson( $pidm );
-		}//end if
-
 		$this->data['aidm'] = $aidm;
 		$this->data['app_seqno'] = $app_seqno ?: $this->max_app();
 
@@ -51,12 +42,13 @@ class Applicant {
 	}//end get
 
 	public static function get( $identifier ) {
+		$pidm = self::has_pidm( $identifier );
 
-		return $identifier ? new Applicant( $identifier ) : FALSE;
+		return ( $pidm ) ? \PSUPerson::get( $pidm ) : new Applicant( $identifier );
 		
 	}//end get
 
-	public function has_pidm( $aidm ) {
+	public static function has_pidm( $aidm ) {
 		$sql = "
 			SELECT sarctrl_pidm
 			  FROM sarctrl
