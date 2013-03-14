@@ -257,11 +257,11 @@ class PasswordManager
 		switch( $diff ) {
 			case ( $diff <= 30 ):
 				$portal = TRUE;
-			case 10:
-				$send = 10;
+			case 15:
+				$send = 15;
 				break;
-			case 5:
-				$send = 5;
+			case 3:
+				$send = 3;
 				break;
 			case 1:
 				$send = 1;
@@ -272,7 +272,7 @@ class PasswordManager
 		 * If the user is within the ten day limit, and has hit any of the 
 		 * "landmarks", email them.
 		 */
-		if( $diff <= 10 && $send && $email ) {
+		if( $diff <= 15 && $send && $email ) {
 			return PSU::email();
 		}//end if
 
@@ -284,7 +284,8 @@ class PasswordManager
 			return $diff;
 		}//end if
 
-		//Hopefully really never hitting this...
+		//Hopefully really never hitting this...if we were hoping to tell 
+		//the user something
 		return FALSE;
 	}//end notifyUser
 
