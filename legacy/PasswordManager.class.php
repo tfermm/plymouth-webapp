@@ -250,6 +250,11 @@ class PasswordManager
 	 */
 	public function notifyUser( $username, $age = NULL, $expiration = NULL, $email = FALSE) {
 
+		$groups = PSU::get('ad')->user_groups($username);
+		if( !in_array( 'faculty', $groups ) && !in_array( 'staff', $groups) ) {
+			return FALSE;
+		}//end if
+
 		$age = $age ?: $this->passwordAge( $username );
 		$expiration = $expiration ?: self::$EXPIRATION;
 		$diff = $expiration - $age;
