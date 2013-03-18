@@ -1,4 +1,5 @@
 <script type="text/javascript" src="{$PHP.BASE_URL}/js/behavior.js"></script>
+<link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/themes/base/jquery-ui.css">
 <div id="tp-accordion">
 	{foreach from=$questions item=question}
 		{if !$question->user_response($user->wp_id)}
