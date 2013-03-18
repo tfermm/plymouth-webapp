@@ -40,6 +40,9 @@ class ResLifeSQL
   }
 
   public $reslife_config_id_msgofday = 'message_of_the_day';
+  public $reslife_config_id_housingapp_email_closing = 'housingapp_email_closing_';
+  public $reslife_config_id_housingapp_email_contact = 'housingapp_email_contact_';
+  public $reslife_config_id_housingapp_email_year = 'housingapp_email_year';
 
 /**
  *
