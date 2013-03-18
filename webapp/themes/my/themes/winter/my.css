@@ -67,7 +67,7 @@ h4 { color: #669acf; }
 	background-image: url('http://s1.plymouth.edu/webapp/themes/my/themes/winter/images/message_bg.gif');
 	border-bottom: none;
 	border-top: none;
-	/*height: 60px;*/
+	height: 60px;
 }
 
 #webapp-nav .container{
