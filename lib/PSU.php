@@ -103,6 +103,7 @@ class PSU
 		'connect_dev' => 'mysql/connect_dev/pdo',
 		'connect_prod' => 'mysql/connect/pdo',
 		'cts' => 'mysql/cts/pdo',
+		'derp' => 'oracle/derp_psu/fixcase',
 		'glpi' => 'mysql/glpi/pdo',
 		'glpi_dev' => 'mysql/glpi_dev/pdo',
 		'go' => 'mysql/go/pdo',
