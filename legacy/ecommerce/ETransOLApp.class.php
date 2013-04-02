@@ -70,15 +70,6 @@ class ETransOLApp extends ETrans {
 		);
 
 		/**
-		 * Rely on the ETrans object to build up a redirect URL to relocate 
-		 * the user after they have passed through the payment gateway.
-		 */
-		$this->setURLParam('redirectUrl', $this->base_url . '/receipt.html');
-		$this->setURLParam('retriesAllowed', 5);
-		
-		$this->setURLParam('redirectUrlParameters', implode(',', $this->_redirect_params));
-
-		/**
 		 * Return the specific URL based on execution location
 		 */
 		return $this->_url( PSU::isdev() ? 'test' : 'prod', $params);
