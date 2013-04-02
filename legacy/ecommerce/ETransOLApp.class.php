@@ -62,7 +62,7 @@ class ETransOLApp extends ETrans {
 			'orderNumber' => $applicant_id,
 			'amount' => 5000,
 			'amountDue' => 5000,
-			'orderType' => 'Admission UG OL App',
+			'orderType' => 'Admission UG App',
 			'orderDescription' => 'Undergraduate Online Admission App Fee',
 			'name' => trim( $applicant->last_name . ', ' . $applicant->first_name . ' ' .$applicant->middle_name ),
 			'userChoice2' => $program,
