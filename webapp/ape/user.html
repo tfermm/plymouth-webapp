@@ -108,4 +108,27 @@ if( $checklist = PSU::db( 'hr' )->execute( 'SELECT * FROM person_checklists WHER
 	$tpl->assign('has_Employee_Exit_Checklist', 'true');  
 }
 
-$tpl->display('user.tpl');
+/*********************************************************************
+ *    Check to see if user has unused roles                          *
+ *********************************************************************/
+$roles = $person->banner_roles;
+//PSU::dbug( $person );
+$unused_roles = array('activestudent',
+											'alumnus',
+											'appaccept',
+											'applicant',
+											'finance',
+											'friends',
+											'intaccept',
+											'prospect',
+											'prospectivestudent'
+										);
+for( $i = 0; $i < sizeof( $roles ); $i++ ){
+	echo "Role: ".$roles[$i]."</br>";
+}
+
+foreach( $roles as $role ){
+	echo "Role: ".$role."</br>";
+}
+
+//$tpl->display('user.tpl');
