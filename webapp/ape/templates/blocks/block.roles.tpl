@@ -12,7 +12,7 @@
 					<td valign="top">
 						<ul class="banner_myp">
 							{* add role descriptions to mysql myplymouth.gtvsqru_desc. html is allowed. *}
-							{foreach from=$person->combined_roles key=role item=contents}
+							{foreach from=$roles key=role item=contents}
 								<li {if $contents.description}title="{$role|escape}" data-content="{$contents.description|escape|nl2br}"{/if}>
 								<img src="{$PHP.BASE_URL}/images/blank.gif" class="badge badge-ban{if $contents.banner} badge-active{/if}">
 								{$role}
