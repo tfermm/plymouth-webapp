@@ -131,6 +131,8 @@ class PSU
 		'surplus_dev' => 'mysql/surplus_dev/pdo',
 		'systems' => 'mysql/systems/pdo',
 		'systems_dev' => 'mysql/systems_test/pdo',
+		'online_forms' => 'mysql/online_forms/pdo',
+		'online_forms_dev' => 'mysql/online_forms_dev/pdo',
 		'portal' => 'mysql/portal/pdo',
 		'portal_dev' => 'mysql/portal_dev/pdo',
 		'psp' => 'oracle/psc1_psu_psp/fixcase',
@@ -3394,6 +3396,7 @@ class PSU
 			$this->add_database('moodle', 'mysql/moodle_dev');
 			$this->add_database('moodle2', 'mysql/moodle2_dev');
 			$this->add_database('myplymouth', 'mysql/myplymouth_dev');
+			$this->add_database('online_forms', 'mysql/online_forms_dev/pdo');
 			$this->add_database('rate_your_mate', 'oracle/rate_your_mate_dev/fixcase');
 			$this->add_database('reslife', 'mysql/reslife_dev/pdo');
 			$this->add_database('systems', 'mysql/systems_test/pdo');
