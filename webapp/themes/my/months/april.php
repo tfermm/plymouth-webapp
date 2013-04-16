@@ -7,7 +7,7 @@ if($day == 1 && $year == 2012) {
 /****************[ April ?: Spring Fling ]*******************/
 /****************[ April 15: Tax Day ]*******************/
 /****************[ April 20-21: Medieval Forum ]*******************/
-if($day >= 20 && $day <= 21 && $year == 2012) {
+if($day >= 19 && $day <= 21 && $year == 2013) {
 	$theme->add('medieval-forum-12','my.css',true);
 }//end elseif
 /****************[ April 22: Earth Day ]*******************/
