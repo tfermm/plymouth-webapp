@@ -95,24 +95,6 @@ $GLOBALS['LOG'] = new PSULog('ape',$_SESSION['username']);
 $GLOBALS['ZimbraAdmin'] = new zimbraAdmin();
 
 /*******************[Authorization Stuff]*****************/
-/*
-$roles = PSU::get('idmobject')->getAllBannerRoles( $_SESSION['username'] );
-$old_roles = array('appaccept',
-									 'activestudent',
-									 'applicant',
-									 'prospect',
-									 'intaccept');
-PSU::dbug($GLOBALS['user_roles']);
-PSU::dbug($old_roles);
-
-foreach( $roles as $role ){
-	if( in_array( $role, $old_roles, true ) ){
-		//unset( $role );
-		$GLOBALS['old_roles'][] = $role;
-	} 
-}
-$GLOBALS['user_roles'] = $roles;
-*/
 $GLOBALS['user_roles'] = PSU::get('idmobject')->getAllBannerRoles( $_SESSION['username'] );
 
 $path_parts = pathinfo( $_SERVER['SCRIPT_FILENAME'] );
