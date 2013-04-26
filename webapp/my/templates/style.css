@@ -410,6 +410,11 @@ strong.req{color:red;}
 	margin-right: 5px;
 }
 
+/************** [ TellPSU ] ****************/
+.tpq-results li{
+	display: list-item;
+}
+
 .remote-channel{
 	color: black;
 	display:block;

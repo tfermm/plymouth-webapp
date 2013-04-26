@@ -713,7 +713,6 @@ $(document).ready(function(){
 		height: 350,
 		width: 600
 	});
-	$('#tp-accordion').accordion();
 }); // $(document).ready
 
 // make sure colorbox opens all the way when triggered

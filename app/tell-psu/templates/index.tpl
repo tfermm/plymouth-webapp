@@ -3,7 +3,7 @@
 <div id="tp-accordion">
 	{foreach from=$questions item=question}
 		{if !$question->user_response($user->wp_id)}
-			<h3>{$question->text}</h3>
+			<h3 class="tp-question-header" id="tp-question-header-{$question->id}">{$question->text}</h3>
 			<div class="tp-question" id="tp-question-{$question->id}">
 				<div class="tpq-form-container">
 					<form id="tpq-form-{$question->id}" class="tpq-form" method="post" action="{$PHP.BASE_URL}/answer/{$question->id}/">
@@ -12,17 +12,21 @@
 					</form>
 				</div>
 		{else}
-			<h3>{$question->text} (Answered)</h3>
+			<h3 class="tp-question-header tp-question-answered" id="tp-question-header-{$question->id}">{$question->text} (Answered)</h3>
 			<div class="tp-question" id="tp-question-{$question->id}">
 				<div class="tpq-form-container">
 					{capture name=response assign=user_response}{$question->user_response($user->wp_id)->answer_id}{/capture}
-					{html_radios name='tp_response' options=$question->radio_answers() selected=$user_response seperator='<br />' disabled=disabled}
+					{if $admin}
+					<ul class="tpq-results">
+					{foreach from=$question->answers() item=answer}
+						<li{if $user_response==$answer->id} class="tpq-result user-selected" style="color: green" {else} class="tpq-result"{/if}>{$answer->text} - {$answer->percent_response()}% ( {$answer->responses()->count()} )</li>
+					{/foreach}
+					</ul>
+					{else}
+						{capture name=response_name assign=user_response_name}tp_response_{$question->id}{/capture}
+						{html_radios name=$user_response_name options=$question->radio_answers() selected=$user_response disabled=disabled}
+					{/if}
 				</div>
-		{/if}
-		{if $admin}
-			<div class="tpq-results">
-				<p>Hai!</p>
-			</div>
 		{/if}
 		</div>
 	{/foreach}

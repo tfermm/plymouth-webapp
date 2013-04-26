@@ -14,6 +14,19 @@ class PSU_Population implements IteratorAggregate, Countable {
 		$this->userfactory = $userfactory;
 	}
 
+	/**
+	 * contains
+	 *
+	 * Used to determine if the passed identifier or object is a member of 
+	 * the population.
+	 *
+	 * @param mixed $identifier A unique identifier for a population match
+	 * @return boolean Returns if the identifier is present.
+	 */
+	public function contains( $identifier ) {
+		return in_array( $identifier, $this->matches );
+	}//end function
+
 	public function count() {
 		return count( $this->matches );
 	}

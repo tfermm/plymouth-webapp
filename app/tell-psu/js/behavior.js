@@ -1,10 +1,13 @@
 $(function() {
-	$('#tp-accordion').accordion();
+	$('#tp-accordion').accordion({
+		heightStyle: "auto",
+		icons: false,
+		animated: false,
+	});
 	tellPSU.init('tell-psu');
 });
 var tellPSU = {
-	init: function(channel_id) 
-	{
+	init: function(channel_id) {
 		$('.tpq-form').submit(function(){
 			var response = $('input[name=tp_response]:checked', this).val();
 			$.my.channelFetch($(this).attr('action') + response, channel_id);

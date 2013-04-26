@@ -9,7 +9,7 @@ class TellPSU {
 	 *
 	 */
 	public function active_questions() {
-		$this->data['active_questions'] = $this->questions->get_by_active( 1 );
+		$this->data['active_questions'] = $this->questions()->get_by_active( 1 );
 		return $this->data['active_questions'];
 	}//end function
 
@@ -67,12 +67,12 @@ class TellPSU {
 	/**
 	 *
 	 */
-	public function user_questions() {
-		foreach( $this->user->portal_roles as $role => $desc ) {
-			$this->data['user_questions'][] = $this->questions->get_by_role( $role );
-		}//end foreach
+	public function user_questions( $user ) {
+		if( is_object( $user ) ) {
+			$user = $user->wp_id;
+		}//end if
 
-		return $this->data['user_questions'];
+		return $this->questions()->get_by_targeting( $user );
 	}//end if
 
 }//end class

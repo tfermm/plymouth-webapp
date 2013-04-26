@@ -38,6 +38,10 @@ abstract class Collection extends \PSU\Collection {
 		return $this->get_by_filter( '\PSU\TellPSU\FilterIterator\Active', $item, $it );
 	}//end get_by_school
 
+	public function get_by_answer( $item, $it = null ) {
+		return $this->get_by_filter( '\PSU\TellPSU\FilterIterator\Answer', $item, $it );
+	}//end get_by_school
+
 	/**
 	 * get an iterator by Validation
 	 * 
@@ -54,8 +58,8 @@ abstract class Collection extends \PSU\Collection {
 		return new $class_name( $item, $it, $inverse );
 	}//end get_by_validation
 
-	public function get_by_role( $item, $it = null ) {
-		return $this->get_by_filter( '\PSU\TellPSU\FilterIterator\Role', $item, $it );
+	public function get_by_targeting( $item, $it = null ) {
+		return $this->get_by_filter( '\PSU\TellPSU\FilterIterator\Targeting', $item, $it );
 	}//end get_by_school
 
 	public function get_by_user( $item, $it = null ) {

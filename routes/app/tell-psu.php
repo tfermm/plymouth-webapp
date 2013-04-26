@@ -70,20 +70,23 @@ respond( function( $request, $response, $app ) {
  * Show the user what they answered if they navigate here directly
  */
 respond('GET','/answer/[:question]/[:response]/?[*]?', function( $request, $response, $app ) {
-	
-	$app->tp->respond( $request->param('question'), $request->param('response') );
+	if( $request->param('response') > 0 ) {
+		$app->tp->respond( $request->param('question'), $request->param('response') );
+	}//end if
 });
 
 respond('POST','/answer/[:question]/?', function( $request, $response, $app ) {
-	$app->tp->respond( $request->param('question'), $_POST['tp_response'] );
+	if( $_POST['tp_response'] ) {
+		$app->tp->respond( $request->param('question'), $_POST['tp_response'] );
+	}//end if
 	\PSU::redirect($GLOBALS['BASE_URL']);
 });
 
 respond( 'GET', '/', function( $request, $response, $app ) {
 });
 
+
 respond( '[*]', function( $request, $response, $app ) {
-	$app->tpl->assign( 'questions', $app->tp->questions() );
+	$app->tpl->assign( 'questions', $app->tp->questions()->get_by_active( 1, $app->tp->questions()->get_by_targeting( $app->user->wp_id ) )->apply_sort( 'user_response', $app->user->wp_id ) );
 	$app->tpl->display( 'index.tpl' );
 });
-

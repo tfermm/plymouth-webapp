@@ -90,7 +90,6 @@ abstract class ActiveRecord extends \PSU_Banner_DataObject implements \PSU\Activ
 				$result[] = $col['Field'];
 			}//end if
 		}//end foreach
-		var_dump( $result );
 
 		return $result;
 	}//end function
