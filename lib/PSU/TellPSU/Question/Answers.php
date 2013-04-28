@@ -9,10 +9,6 @@ class Answers extends \PSU\TellPSU\Collection {
 	static $table = 'tp_answers';
 	static $join = '';
 
-	public function responses() {
-		return new Responses( $this->question_id ); 
-	}//end function
-
 	protected function _get_order() {
 		return 'date_created';
 	}

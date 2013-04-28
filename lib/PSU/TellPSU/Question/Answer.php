@@ -6,6 +6,13 @@ class Answer extends \PSU\TellPSU\ActiveRecord{
 	static $table = 'tp_answers';
 	static $_name = 'Answer';
 
+	/**
+	 * percent_responses
+	 *
+	 * Return the percent out of all responses that this answer was chosen
+	 *
+	 * @return int Return the percent that this answer was chosen.
+	 */
 	public function percent_response() {
 		if( $this->_get_related( __FUNCTION__, '\\PSU\\TellPSU\\Question\\Responses', $this->question_id )->count() <= 0 ) {
 			return 0;
@@ -14,6 +21,13 @@ class Answer extends \PSU\TellPSU\ActiveRecord{
 		return $this->responses()->count()/$this->_get_related( __FUNCTION__, '\\PSU\\TellPSU\\Question\\Responses', $this->question_id )->count()*100;
 	}//end function
 
+	/**
+	 * responses
+	 *
+	 * Get the responses collection for this answer.
+	 *
+	 * @return object Responses collection specific to this answer.
+	 */
 	public function responses() {
 		return $this->_get_related( __FUNCTION__, '\\PSU\\TellPSU\\Question\\Responses', $this->question_id )->get_by_answer( $this->id );
 	}//end function

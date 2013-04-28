@@ -2,12 +2,16 @@
 
 namespace PSU\TellPSU\Question;
 
-class target extends \PSU\TellPSU\ActiveRecord{
+class Target extends \PSU\TellPSU\ActiveRecord{
 	static $table = 'tp_targets';
 	static $_name = 'Target';
 
 	/**
+	 * population
+	 *
 	 * create a PSU Population object based on the class
+	 *
+	 * @return object An instance of a PSU Population object
 	 */
 	public function population() {
 		$query = '\PSU_Population_Query_' . $this->class;
