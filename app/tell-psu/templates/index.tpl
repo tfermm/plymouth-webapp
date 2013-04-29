@@ -29,5 +29,7 @@
 				</div>
 		{/if}
 		</div>
+	{foreachelse}
+		<h3>There are currently no polls available to you at this time.</h3>
 	{/foreach}
 </div>
