@@ -27,6 +27,7 @@ respond( function( $request, $response, $app ) {
 
 	IDMObject::authN();
 
+	$app->admin = false;
 	if( IDMObject::authZ('permission', 'mis') || IDMObject::authZ('permission', 'tell_psu') ) {
 		$app->admin = true;
 		//die('You do not have access to this application. If you believe that this is in error, please contact the helpdesk at 535-2929 and explain that you are requesting access to administer "tell-psu".');
