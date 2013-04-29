@@ -32,6 +32,9 @@ abstract class Collection implements \ArrayAccess, \IteratorAggregate, \Countabl
 
 	abstract public function get();
 
+	/**
+	 *
+	 */
 	public function add_children( $rows ) {
 		$this->children = array();
 
@@ -47,15 +50,70 @@ abstract class Collection implements \ArrayAccess, \IteratorAggregate, \Countabl
 		}
 	}
 
+	/**
+	 *
+	 */
+	public function add_children_array( $objects ) {
+		$this->children = array();
+
+		foreach( $objects as $obj ) {
+			$this->children[] = $obj;
+		}//end foreach
+	}//end function
+
+	/**
+	 *
+	 */
 	public function add_children_bare( $children ) {
 		$this->children = $children;
 	}
 
+	/**
+	 *
+	 */
+	public function apply_sort( $sort_by, $sort_params = null ) {
+		$object_array = iterator_to_array( $this->getIterator() );
+		usort( $object_array, function( $a, $b ) use ( $sort_by, $sort_params ) {
+			$base_a = method_exists( $a, $sort_by ) ? $a->$sort_by( $sort_params ) : $a->$sort_by;
+			$base_b = method_exists( $b, $sort_by ) ? $b->$sort_by( $sort_params ) : $b->$sort_by;
+			$sort_type = gettype( $base_a );
+
+			switch( $sort_type ) {
+				case ( $sort_type == 'object' || $sort_type == 'array' || $sort_type == 'boolean' ):
+					$base_a = $base_a ? TRUE : FALSE;
+					$base_b = $base_b ? TRUE : FALSE;
+
+					if( $base_a == $base_b ) {
+						return 0;
+					}//end if
+					return $base_a == TRUE ? 1 : -1;
+
+				case ( $sort_type == 'integer' || $sort_type == 'double' ):
+					if( $base_a == $base_b ) {
+						return 0;
+					}//end if
+					return $base_a < $base_b ? -1 : 1;
+
+				case 'string':
+					return strcmp( $base_a, $base_b );
+			}//end switch
+
+		});
+
+		return $object_array;
+	}//end function
+
+	/**
+	 *
+	 */
 	public function count() {
 		$this->load();
 		return count( $this->children );
 	}
 
+	/**
+	 *
+	 */
 	public function getIterator() {
 		$this->load();
 
@@ -68,6 +126,9 @@ abstract class Collection implements \ArrayAccess, \IteratorAggregate, \Countabl
 		return $this->it;
 	}
 
+	/**
+	 *
+	 */
 	public function load() {
 		if( null !== $this->children ) {
 			return;

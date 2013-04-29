@@ -22,7 +22,6 @@ class PSU_Population_Query_GradStudent extends PSU_Population_Query {
 		";
 
 		unset( $args['identifier']);
-		\PSU::db('banner')->debug = true;
 		$matches = PSU::db('banner')->GetCol( $sql, $args );
 		
 		return $matches;

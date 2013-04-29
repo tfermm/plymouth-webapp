@@ -1,6 +1,6 @@
 <?php
 
-class PSU_Population_Query_MIS extends PSU_Population_Query {
+class PSU_Population_Query_GraduatingSeniors2013 extends PSU_Population_Query {
 
 	/**
 	 * Return a set of matched users for the PSU_Population object.
@@ -14,9 +14,10 @@ class PSU_Population_Query_MIS extends PSU_Population_Query {
 		$args = PSU::params( $args, $defaults );
 
 		$sql = "
-			SELECT DISTINCT ".$args['identifier']."
-			  FROM v_idm_attributes
-			 WHERE attribute = 'mis'
+			SELECT DISTINCT i.".$args['identifier']."
+				FROM PSU.graduating_seniors_2013 g
+				JOIN PSU_IDENTITY.person_identifiers i
+					ON g.pidm = i.pid
 		";
 
 		unset( $args['identifier'] );
