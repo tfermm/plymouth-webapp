@@ -2,7 +2,7 @@
 			<h3>Roles</h3>
 			<table class="grid roles" width="100%">
 				<tr>
-					<th>Banner
+					<th>Active Roles
 							(<a class="tooltip-trigger" href="{$PHP.BASE_URL}/actions/synchronize.php?pidm={$person->pidm}&synchronize_ldi=1" title="This link is merely a mimic of the ICGORODM tool in INB.  If a user's Banner roles or Moodle data gets out of sync, simply click this link to synchronize the account!">sync</a>)
 					</th>
 					<th>Active Directory
@@ -12,7 +12,7 @@
 					<td valign="top">
 						<ul class="banner_myp">
 							{* add role descriptions to mysql myplymouth.gtvsqru_desc. html is allowed. *}
-							{foreach from=$person->combined_roles key=role item=contents}
+							{foreach from=$roles key=role item=contents}
 								<li {if $contents.description}title="{$role|escape}" data-content="{$contents.description|escape|nl2br}"{/if}>
 								<img src="{$PHP.BASE_URL}/images/blank.gif" class="badge badge-ban{if $contents.banner} badge-active{/if}">
 								{$role}
