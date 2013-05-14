@@ -535,6 +535,7 @@ $(document).ready(function(){
 	}
 
 	$('.change-password').popover();
+	$('.family-access-perm').popover();
 
 	//$(document).pngFix();
 

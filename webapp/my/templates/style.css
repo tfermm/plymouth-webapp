@@ -367,6 +367,11 @@ strong.req{color:red;}
 #psu-friend-header h1 a{color:#85360f;}
 #psu-friend-nav li{float:none;list-style:circle;margin-left:20px;}
 
+.family-access-perm {
+	display: inline;
+	float: none;
+}
+
 .comp_res_header{
 	border: 1px solid #ccc;
 	margin:1px 0px;
