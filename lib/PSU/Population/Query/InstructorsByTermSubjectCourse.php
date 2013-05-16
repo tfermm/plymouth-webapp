@@ -13,6 +13,7 @@ class PSU_Population_Query_InstructorsByTermSubjectCourse extends PSU_Population
 	public function query( $args = array() ) {
 
 		$defaults = array(
+			'identifier' => 'psu_id', //any field from PSU_IDENTITY.person_identifiers
 			'term_code' => NULL,
 			'subject_code' => NULL,
 			'course_number' => NULL,
@@ -26,17 +27,18 @@ class PSU_Population_Query_InstructorsByTermSubjectCourse extends PSU_Population
 		}
 
 		$sql = "
-			SELECT spriden_id
+			SELECT DISTINCT pi.".$args['identifier']."
 			FROM spriden
-			JOIN sirasgn ON spriden_pidm = sirasgn_pidm
+			JOIN PSU_IDENTITY.person_identifiers pi ON pi.pid = spriden_pidm
+			JOIN sirasgn ON sirasgn_pidm = spriden_pidm
 			JOIN ssbsect ON ssbsect_crn = sirasgn_crn
 			WHERE spriden_change_ind IS NULL
 			AND ssbsect_term_code = :term_code
 			AND ssbsect_subj_code = :subject_code
 			AND ssbsect_crse_numb = :course_number
-			GROUP BY spriden_id
 		";
-
+		
+		unset( $args['identifier']);
 		return PSU::db('banner')->GetCol( $sql, $args );
 	}
 }
