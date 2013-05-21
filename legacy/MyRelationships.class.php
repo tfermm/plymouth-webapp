@@ -882,15 +882,17 @@ class MyPermission {
 	public $code;
 	public $name;
 	public $url;
+	public $description;
 
 	/**
 	 *
 	 */
-	public function __construct( $id, $code, $name, $url = null ) {
+	public function __construct( $id, $code, $name, $url = null, $description = null ) {
 		$this->id = $id;
 		$this->code = $code;
 		$this->name = $name;
 		$this->url = $url;
+		$this->description = $description;
 	}//end __construct
 	
 	/**
@@ -959,7 +961,7 @@ class MyPermission {
 			throw new Exception('permission not found');
 		}
 
-		$perm = new self( $row['id'], $row['code'], $row['name'], $row['url'] );
+		$perm = new self( $row['id'], $row['code'], $row['name'], $row['url'], $row['description'] );
 		
 		$cache[ $row['id'] ] =& $perm;
 		$cache[ $row['code'] ] =& $perm;
