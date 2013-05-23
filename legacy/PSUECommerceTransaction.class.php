@@ -196,6 +196,11 @@ class PSUECommerceTransaction extends PSUECommerce
 						}//end foreach
 					}//end foreach
 					
+					/**
+					 * For explanation about field names and transation handling, 
+					 * see the following Wiki article:
+					 * https://www.plymouth.edu/webapp/mis/wiki/E-Commerce_Feed_Processing#Handling_Transactions
+					 */
 					if($row = $this->db->GetRow("SELECT * FROM ecommerce_transaction WHERE (transactionid=".$trans_data['transactionId']." OR fulltransactionid=".$trans_data['transactionId'].") AND fileid='receipt'"))
 					{
 						if($row['transactiontype'] != $trans_data['transactionType'] ||
