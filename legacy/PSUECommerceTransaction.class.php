@@ -196,7 +196,7 @@ class PSUECommerceTransaction extends PSUECommerce
 						}//end foreach
 					}//end foreach
 					
-					if($row = $this->db->GetRow("SELECT * FROM ecommerce_transaction WHERE transactionid=".$trans_data['transactionId']." AND fileid='receipt'"))
+					if($row = $this->db->GetRow("SELECT * FROM ecommerce_transaction WHERE (transactionid=".$trans_data['transactionId']." OR fulltransactionid=".$trans_data['transactionId'].") AND fileid='receipt'"))
 					{
 						if($row['transactiontype'] != $trans_data['transactionType'] ||
 						   $row['transactionstatus'] != $trans_data['transactionStatus'] ||
@@ -206,10 +206,10 @@ class PSUECommerceTransaction extends PSUECommerce
 						}//end if
 						else
 						{
-							$this->db->Execute("UPDATE ecommerce_transaction SET fileid=".$trans_data['fileId']." WHERE transactionid = ".$trans_data['transactionId']." AND fileid = 'receipt'");
+							$this->db->Execute("UPDATE ecommerce_transaction SET fileid=".$trans_data['fileId']." WHERE fulltransactionid = ".$trans_data['transactionId']." AND fileid = 'receipt'");
 						}//end else
 					}//end if
-					elseif(!$this->db->GetOne("SELECT * FROM ecommerce_transaction WHERE transactionid=".$trans_data['transactionId']." AND fileid=".$trans_data['fileId'].""))
+					elseif(!$this->db->GetOne("SELECT * FROM ecommerce_transaction WHERE fulltransactionid=".$trans_data['transactionId']." AND fileid=".$trans_data['fileId'].""))
 					{					
 						//insert transaction information
 						if(!$this->db->Execute($this->generateSQL('ecommerce_transaction', $trans_data)))
