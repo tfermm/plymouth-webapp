@@ -1305,7 +1305,7 @@ class ReserveDatabaseAPI{
 			  FROM cts_reservation 
 			 WHERE 1=1 {$where}
 			   AND deleted = false 
-		   ORDER BY reservation_idx DESC LIMIT 100";
+		   ORDER BY reservation_idx DESC";
 		return PSU::db('cts')->GetAssoc($sql, $args);
 
 	}//end function search_reservation
