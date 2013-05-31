@@ -14,6 +14,27 @@ class ETransUGDeposit extends ETrans
 		
 		if($this->psu_status == 'eod')
 		{
+			/**
+			 * NOTICE!!!!
+			 *
+			 * This line is being placed here as a stop gap to help account 
+			 * for a suspected ADOdb driver issue that we are having around 
+			 * php scripts running against Oracle databses and specifically 
+			 * with how the NLS_DATE_FORMAT is handled. This line FAILS ON 
+			 * PURPOSE!!!
+			 *
+			 * WHY!?
+			 * It seems like the first time that this is called in a PHP 
+			 * script that it will always fail, but will succeed on subsequent 
+			 * calls. Since it is called in every run of a record to be 
+			 * inserted into TBRDEPO, we are going to fail it here outside of 
+			 * the transaction to allow for the TBRDEPO record creation to be 
+			 * successful.
+			 *
+			 * TODO: Find out exactly why this fails on the first call, and 
+			 * fix it!
+			 */
+			PSU::db('banner')->Execute("SELECT TO_DATE(G\$_DATE.NORMALISE_GREG_DATE('31-12-2099', 'DD-MM-YYYY'),G\$_DATE.GET_NLS_DATE_FORMAT) FROM DUAL");
 			PSU::db('banner')->StartTrans();
 			$total = $this->totalamount / 100;
 			
