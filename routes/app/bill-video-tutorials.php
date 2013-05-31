@@ -1,10 +1,5 @@
 <?php
 
-/**
- * Uncomment once object structure has been written
- * use \PSU\BillVideoTutorials;
- */
-
 respond( function( $request, $response, $app ) {
 	PSU::session_start();
 
@@ -29,19 +24,6 @@ respond( function( $request, $response, $app ) {
 	};
 
 	$app->tpl = new \PSU\Template;
-	$app->user = PSUPerson::get( $_SESSION['wp_id'] ); 
-
-	/**
-	 * Not all apps need this cool breadcrumb
-	 * functionality, so delete it if you aren't going to 
-	 * use it. If you are, then uncomment it.
-	 *
-	 * $app->breadcrumbs = new \PSU\Template\Breadcrumbs;
-	 * $app->breadcrumbs->push( new \PSU\Template\Breadcrumb( 'Home', $app->config->get( '%CUSTDIR', 'base_url' ) . '/' ) );
-	 */
-
-	$app->tpl->assign( 'user', $app->user );
-	$app->tpl->assign( 'back_url', $_SERVER['HTTP_REFERER'] );
 });
 
 //
