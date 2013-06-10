@@ -111,7 +111,7 @@
 
 		{col size=4 class="alpha omega assignment"}
 			<label for="tlc_assigned_to">Assign To:</label>
-			<select name="tlc_assigned_to" id="tlc_assigned_to" onChange="change_status('tlc_assigned_to');">
+			<select name="tlc_assigned_to" id="tlc_assigned_to"{if $call_status != 'closed'} onChange="change_status('tlc_assigned_to');"{/if}>
 				<option value="unassigned">Unassigned</option>
 				<option value="caller">The Caller</option>
 				{$tlc_select_list}
@@ -120,7 +120,7 @@
 			<br clear="left"/>
 			
 			<label for="its_assigned_group">Group: (<a href="{$PHP.BASE_URL}/business-area.html?clean=1" id="its-group-help" title="ITS Group Responsibilities">?</a>)</label>
-			<select name="its_assigned_group" id="its_assigned_group" onChange="change_status('its_assigned_group');" >
+			<select name="its_assigned_group" id="its_assigned_group"{if $call_status != 'closed'} onChange="change_status('its_assigned_group');"{/if} >
 				<option value="0">Unassigned</option>
 				{$its_select_group_list}
 			</select>
