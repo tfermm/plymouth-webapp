@@ -9,6 +9,9 @@ RewriteEngine on
 RewriteRule ^banner$ banner/ [R=301,L]
 RewriteRule ^banner/$ banner_security.html [QSA,L]
 
+RewriteRule ^inactivate-students$ inactivate-students/ [R=301,L]
+RewriteRule ^inactivate-students/$ inactivate_students.html [QSA,L]
+
 #notes rewrite rule
 RewriteRule ^user/([0-9]+)/notes/([^/]+)/([0-9]+)/?$ notes.html?pidm=$1&action=$2&id=$3 [QSA,L]
 RewriteRule ^user/([0-9]+)/notes/([^/]+)/?$ notes.html?pidm=$1&action=$2 [QSA,L]
