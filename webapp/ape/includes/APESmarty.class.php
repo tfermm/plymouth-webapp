@@ -73,9 +73,13 @@ class APESmarty extends PSUTemplate
 		$links['nav-identity']['children'][] = $this->createLink('Creation ('.$GLOBALS['ape']->pending_accounts_count().')', $GLOBALS['BASE_URL'].'/pending.html', 'nav-pend-create', 'pending-creation');
 		$links['nav-identity']['children'][] = $this->createLink('Deletion ('.$GLOBALS['ape']->pending_deletion_count().')', $GLOBALS['BASE_URL'].'/deletion.html', 'nav-pend-delete', 'pending-deletion');
 
-		if( IDMObject::authz('permission', 'mis') || IDMObject::authz('permission', 'inactivate_students')) {
-			$links['nav-identity']['children'][] = $this->createLink('Inactivate Students', $GLOBALS['BASE_URL'].'/inactivate-students', 'nav-inact-stud', 'eye-close');
-			//$links['nav-identity']['children'][nav-inact-stud][icon] = 'eye-close';
+		if( IDMObject::authz('permission', 'mis') || IDMObject::authz('permission', 'ape_inactivate_students')) {
+			$links['nav-identity']['children'][] = array(
+				'title' => 'Inactivate Students', 
+				'url' => $GLOBALS['BASE_URL'].'/inactivate-students', 
+				'class' => 'nav-inact-stud', 
+				'icon' => 'eye-close'
+			);
 		}//end if
 
 		if( IDMObject::authz('permission', 'mis')) {
