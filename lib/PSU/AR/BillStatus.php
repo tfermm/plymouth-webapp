@@ -123,21 +123,21 @@ class BillStatus{
  	}
  	
  	public function is_warning(){
- 		if ( $this->total_billing_hours >= 1000 && $this->overall_balance > 0 && $this->today <= $this->bill_due_raw ){
+ 		if ( $this->total_billing_hours >= 0 && $this->overall_balance > 0 && $this->today <= $this->bill_due_raw ){
 			$this->status = array();
  			$this->status['type'] = "WARNING";
  			$this->status['message'] = "Your course registration is not protected.  Payment for the $this->next_term term is due $this->bill_due_formatted.  If your account is not cleared your courses may be dropped.";
  			$this->status['short_message'] = "Registered for the term, but remaining outstanding balance $1000 or greater prior to due date.";
  			return true;
  		}
- 		else if(($this->total_billing_hours >= 1000) && ($this->overall_balance > 0) && ($this->today >= $this->bill_due_raw) && ($this->today <= ($this->bill_due_raw + 3888000))){
+ 		else if(($this->total_billing_hours >= 0) && ($this->overall_balance > 0) && ($this->today >= $this->bill_due_raw) && ($this->today <= ($this->bill_due_raw + 3888000))){
 			$this->status = array();
  			$this->status['type'] = "WARNING";
  			$this->status['message'] = "Your course registration is not protected and your courses may be dropped for nonpayment. Payment is due immediately.";
  			$this->status['short_message'] = "Registered for the term, but remaining outstanding balance $1000 or greater after due date (0-45 days).";
  			return true;
  		}
- 		else if( ($this->total_billing_hours >= 1000 && $this->overall_balance > 0 && ($today > ($this->bill_due_raw + 3888000))) || ($this->overall_balance > 0 && $this->overall_balance < 1000)){
+ 		else if( ($this->total_billing_hours >= 0 && $this->overall_balance > 0 && ($today > ($this->bill_due_raw + 3888000))) || ($this->overall_balance > 0 && $this->overall_balance < 1000)){
 			$this->status = array();
  			$this->status['type'] = "WARNING";
  			$this->status['message'] = "You have a balance on your account. Please clear your account immediately to avoid financial holds and late fees.";
