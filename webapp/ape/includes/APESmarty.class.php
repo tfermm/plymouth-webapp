@@ -73,6 +73,15 @@ class APESmarty extends PSUTemplate
 		$links['nav-identity']['children'][] = $this->createLink('Creation ('.$GLOBALS['ape']->pending_accounts_count().')', $GLOBALS['BASE_URL'].'/pending.html', 'nav-pend-create', 'pending-creation');
 		$links['nav-identity']['children'][] = $this->createLink('Deletion ('.$GLOBALS['ape']->pending_deletion_count().')', $GLOBALS['BASE_URL'].'/deletion.html', 'nav-pend-delete', 'pending-deletion');
 
+		if( IDMObject::authz('permission', 'mis') || IDMObject::authz('permission', 'ape_inactivate_students')) {
+			$links['nav-identity']['children'][] = array(
+				'title' => 'Inactivate Students', 
+				'url' => $GLOBALS['BASE_URL'].'/inactivate-students', 
+				'class' => 'nav-inact-stud', 
+				'icon' => 'eye-close'
+			);
+		}//end if
+
 		if( IDMObject::authz('permission', 'mis')) {
 			$links['nav-identity']['children'][] = $this->createLink('Provision/Deprovision Docs', 'https://docs.google.com/Doc?docid=0AcDtIeWVN6nGYWNmZ3dxamRqOW5jXzE0N2dndHBqNmZn&hl=en', 'nav-identity', 'identity');
 		}//end if

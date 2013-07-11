@@ -92,9 +92,9 @@ class Applicant {
 	public function _load_person() {
 		$sql = "
 			SELECT sarpers_first_name AS first_name,
-						 sarpers_middle_name1 || ' ' ||sarmers_middle_name2 AS middle_name,
+						 sarpers_middle_name1 || ' ' || sarpers_middle_name2 AS middle_name,
 						 sarpers_last_name AS last_name,
-						 sarpers_seqno AS person_seqno
+						 sarpers_seqno AS person_seqno,
 						 sarpers_birth_dte AS dob,
 						 sarpers_gender AS gender
 				FROM sarpers

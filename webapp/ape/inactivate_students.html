@@ -1,0 +1,113 @@
+<?php
+
+if( !IDMObject::authZ('permission','mis') && !IDMObject::authZ('permission','ape_inactivate_students') )
+{
+	exit('You do not have access to this application');
+}//end if
+
+$tpl = new APESmarty();
+
+function inactivateStudent($pidm,$copy_termcode,$termcode) {
+	PSU::db('banner')->StartTrans();
+	$sql="DECLARE 
+					v_row gb_common.internal_record_id_type; 
+				BEGIN 
+					sb_learner.p_copy_learner(p_pidm=>$pidm, p_term_code_old=>'$copy_termcode',p_term_code_new=>'$termcode');
+					gb_common.p_commit();
+				END;";
+	$stmt=PSU::db('banner')->PrepareSP($sql);
+	PSU::db('banner')->Execute($stmt);
+
+	$levl = (in_array(substr($termcode,4),array('91','92','93','94','95','80')))?'GR':'UG';
+
+	$old_record = PSU::cleanKeys('sgbstdn_', '', PSU::db('banner')->GetRow("SELECT * FROM sgbstdn WHERE sgbstdn_pidm = :pidm AND sgbstdn_term_code_eff = :term", array('pidm' => $pidm, 'term' => $copy_termcode)));
+	unset($old_record['pidm'], $old_record['user_id'], $old_record['exp_grad_date'], $old_record['leav_from_date'], $old_record['leav_to_date'], $old_record['activity_date'], $old_record['data_origin']);
+
+	$old_record['term_code_eff'] = $termcode;
+	$old_record['stst_code'] = 'IS';
+	$old_record['levl_code'] = $levl;
+
+	$sql = "UPDATE sgbstdn SET ";
+	$bind = array();
+	foreach( $old_record as $key => $value ) {
+		if( $value !== null ) {
+			$sql .= 'sgbstdn_' . $key . " = :".$key.", ";
+
+			$bind[$key] = $value;
+		}//end if
+	}//end foreach
+	$sql = trim( $sql, ', ' );
+	$sql .= " WHERE sgbstdn_pidm = $pidm AND sgbstdn_term_code_eff = '$termcode' AND sgbstdn_stst_code = 'AS'";
+
+	PSU::db('banner')->Execute($sql, $bind);
+
+	PSU::db('banner')->CompleteTrans();
+}//end inactivateStudent
+
+$script = new PSUScriptUtility(PSU::db('banner'),'inactivate_students');
+
+if($_SERVER['REQUEST_METHOD']=='POST')
+{
+	if($_FILES['csv']['name'])
+	{
+		$idm = new IDMObject;
+		$field_data = array(
+			array('name'=>'pidm','primary'=>true),
+			array('name'=>'termcode'),
+			array(
+				'name'=>'name', 
+				'data'=> array(
+					'function'=> array(&$idm, 'getName'),
+					'params'=> array('%%pidm%%','l, f')
+				)
+			),
+			array(
+				'name'=>'id', 
+				'data'=> array(
+					'function'=> array(&$idm, 'getIdentifier'),
+					'params'=> array('%%pidm%%','pid','psu_id')
+				)
+			)
+		);
+		
+		$script->upload($_FILES['csv']['tmp_name'], $field_data);
+	}//end if
+	elseif($_GET['process'])
+	{
+		$students = $script->select();
+		if(is_array($students) && strlen($_POST['term'])==6)
+		{
+			foreach($students as $student)
+			{
+				inactivateStudent($student['pidm'],$student['termcode'],$_POST['term']);
+				$field_data = array(
+					'primary_field' => 'pidm',
+					'primary_field_data' => $student['pidm']
+				);
+				$script->delete($field_data);
+			}//end foreach
+		}//end if
+	}//end else
+
+	header('Location: '.$GLOBALS['BASE_URL'].'/inactivate_students.html');
+	exit;
+}//end if
+elseif($_GET['purge'])
+{
+	$script->purge();
+	header('Location: '.$GLOBALS['BASE_URL'].'/inactivate_students.html');
+	exit;
+}//end else
+elseif($_GET['delete'])
+{
+	$field_data = array(
+		'primary_field' => 'pidm',
+		'primary_field_data' => PSUTools::makeSafe($_GET['delete'])
+	);
+	$script->delete($field_data);
+	header('Location: '.$GLOBALS['BASE_URL'].'/inactivate_students.html');
+	exit;
+}//end else if delete
+
+$tpl->assign('students', $script->select());
+$tpl->display('inactivate_students.tpl');

@@ -83,11 +83,9 @@ respond('POST','/answer/[:question]/?', function( $request, $response, $app ) {
 	\PSU::redirect($GLOBALS['BASE_URL']);
 });
 
-respond( 'GET', '/', function( $request, $response, $app ) {
-});
-
-
-respond( '[*]', function( $request, $response, $app ) {
+respond( 'GET', '/?', function( $request, $response, $app ) {
 	$app->tpl->assign( 'questions', $app->tp->questions()->get_by_active( 1, $app->tp->questions()->get_by_targeting( $app->user->wp_id ) )->apply_sort( 'user_response', $app->user->wp_id ) );
 	$app->tpl->display( 'index.tpl' );
 });
+
+with( '/admin', __DIR__ . '/tell-psu/admin.php' );
