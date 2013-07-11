@@ -1,0 +1,19 @@
+php_value auto_prepend_file none 
+php_value auto_append_file none
+
+RewriteEngine On
+
+RewriteBase /webapp/idcard/
+RewriteRule   ^u/([\_\.a-zA-Z0-9]+)/orig	index.html?username=$1&orig=1 [QSA,L]
+RewriteRule   ^i/([a-zA-Z0-9]+)/orig	index.html?id=$1&orig=1 [QSA,L]
+RewriteRule   ^u/([\_\.a-zA-Z0-9]+)/invert	index.html?username=$1&orig=1&invert=1 [QSA,L]
+RewriteRule   ^i/([a-zA-Z0-9]+)/invert	index.html?id=$1&orig=1&invert=1 [QSA,L]
+RewriteRule   ^u/([\_\.a-zA-Z0-9]+)/w/([0-9]+)/h/([0-9]+)	index.html?username=$1&width=$2&height=$3 [QSA,L]
+RewriteRule   ^u/([\_\.a-zA-Z0-9]+)/h/([0-9]+)	index.html?username=$1&height=$2 [QSA,L]
+RewriteRule   ^u/([\_\.a-zA-Z0-9]+)/w/([0-9]+)	index.html?username=$1&width=$2 [QSA,L]
+RewriteRule   ^i/([a-zA-Z0-9]+)/w/([0-9]+)/h/([0-9]+)	index.html?id=$1&width=$2&height=$3 [QSA,L]
+RewriteRule   ^i/([a-zA-Z0-9]+)/h/([0-9]+)	index.html?id=$1&height=$2 [QSA,L]
+RewriteRule   ^i/([a-zA-Z0-9]+)/w/([0-9]+)	index.html?id=$1&width=$2 [QSA,L]
+RewriteRule   ^u/([\_\.a-zA-Z0-9]+)	index.html?username=$1 [QSA,L]
+RewriteRule   ^u/	index.html?username=xxx [QSA,L]
+RewriteRule   ^i/([a-zA-Z0-9]+)	index.html?id=$1 [QSA,L]

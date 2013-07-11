@@ -1,0 +1,118 @@
+<?php 
+
+require dirname( dirname( __DIR__ ) ) . '/legacy/git-bootstrap.php';
+require_once 'autoload.php';
+PSU::session_start();
+/*******************[Site Constants]*****************/
+// Base directory of application
+$GLOBALS['BASE_DIR']=dirname(__FILE__);
+
+// Base URL
+$GLOBALS['BASE_URL']='https://'.$_SERVER['HTTP_HOST'].'/webapp/idcard';
+
+// Local Includes
+$GLOBALS['LOCAL_INCLUDES']=$GLOBALS['BASE_DIR'].'/includes';
+
+// Templates
+$GLOBALS['TEMPLATES']=$GLOBALS['BASE_DIR'].'/templates';
+
+/*******************[End Site Constants]*****************/
+
+/*******************[Includes]**********************/
+/*******************[End Includes]**********************/
+
+$GLOBALS['BANNER'] = PSU::db('banner');
+
+$idm=new IDMObject($GLOBALS['BANNER']);
+
+$valid_ips = array(
+	'158.136.18.'
+);
+
+$ip_match = false;
+foreach( $valid_ips as $ip ) {
+	if( strpos( $_SERVER['REMOTE_ADDR'], $ip ) !== false ) {
+		$ip_match = true;
+		break;
+	}//end if
+}//end foreach
+
+// allow logged in people and valid ips
+if($_SESSION['username'] || $ip_match)
+{
+	if(isset($_GET['username']))
+	{
+		if($_GET['username']=='sjsteen'){$_GET['username']='ssteen';}
+		if($_GET['username']=='jbernier'){$_GET['username']='jnbernier';}
+		$img_pidm=$idm->getIdentifier($_GET['username'],'username','pid');
+	}
+	elseif(isset($_GET['id']))
+		$img_pidm=$idm->getIdentifier($_GET['id'],'psu_id','pid');
+	else
+		$img_pidm=$_GET['pidm'];
+
+	if( !$ip_match ) {
+		$browser_pidm=$idm->getIdentifier($_SESSION['username'],'username','pid');
+	}//end if
+	$roles=array();
+
+	if($browser_pidm!=$img_pidm && !$ip_match)
+	{
+		$roles=$idm->getAllBannerRoles($browser_pidm);
+	}//end if
+	
+	if($browser_pidm==$img_pidm || in_array('faculty',$roles) || in_array('employee',$roles) || $ip_match || IDMObject::authZ('role', 'reslife') )
+	{
+		if($img_pidm)
+		{
+			$image=$GLOBALS['BANNER']->GetOne("SELECT spbcard_picture FROM spbcard WHERE spbcard_pidm=".$img_pidm." AND spbcard_picture IS NOT NULL");
+		}//end if
+
+		if(!$image)
+		{
+			$image=file_get_contents('images/not_available.gif');
+		}//end if
+	}//end if
+	else
+	{
+		$image=file_get_contents('images/invalid_permission.gif');
+	}//end else
+}//end if
+else
+{
+	$image=file_get_contents('images/invalid_permission.gif');
+}//end else
+$new_height=($_GET['height'])?$_GET['height']:130;
+$new_width=($_GET['width'])?$_GET['width']:98;
+
+$image=imagecreatefromstring($image);
+$width=imagesx($image);
+$height=imagesy($image);
+
+if($_GET['orig'])
+{
+	$thumb=$image;
+}//end if
+else
+{
+	$thumb=imagecreatetruecolor($new_width,$new_height);
+	imagecopyresampled($thumb,$image,0,0,0,0,$new_width,$new_height,$width,$height);
+}//end else
+
+if($_GET['invert'])
+{
+	for($i = 0; $i < $height; $i++)
+	{
+		for($j = 0; $j < $width; $j++)
+		{
+			$pos = imagecolorat($image, $j, $i);
+			$f = imagecolorsforindex($image, $pos);
+			$col = imagecolorresolve($image, 255-$f['red'], 255-$f['green'], 255-$f['blue']);
+			imagesetpixel($image, $j, $i, $col);
+		}
+	}
+}
+
+Header('Content-type: image/gif');
+imagegif($thumb);
+?>
