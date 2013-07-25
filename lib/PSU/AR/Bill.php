@@ -1071,67 +1071,10 @@ class Bill extends \BannerObject
 	public function _load_bill_status()
 	{
 		$this->data['bill_status'] = new BillStatus($this->pidm);
-		/*
-		$db = PSU::db('banner');
-		$bill_status = array();
-		// term
-		$sql = "SELECT value FROM GXBPARM WHERE param=:param";
-		$args = array('param'=>'ug_bill_default_term');
-		$bill_status['term'] = $db->GetOne($sql, $args);
-
-		// bill available date
-		$sql = "SELECT value FROM GXBPARM WHERE param=:avail";
-		$args = array('avail'=>'ug_bill_avail_date');
-		$bill_status['avail_date'] = strtotime($db->GetOne($sql, $args));
-
-		// bill due date 
-		$sql = "SELECT value FROM GXBPARM WHERE param=:due";
-		$args = array('due'=>'ug_bill_due_date');
-		$bill_status['due_date'] = strtotime($db->GetOne($sql, $args));
-
-		// now date
-		$bill_status['today'] = strtotime(date('Y-m-d'));
-
-		// term
-		$sql = "SELECT ug_bill_default_term FROM GXBPARM WHERE 1=1";
-		$args = array('param'=>'ug_bill_default_term');
-		$bill_status['term'] = $db->GetOne($sql, $args);
-
-		// enrolment status
-		$sql = "SELECT sfbetrm_ests_code
-						FROM sfbetrm
-						WHERE sfbetrm_pidm=:pidm
-						AND sfbetrm_term_code=:term_code"; 
-
-		$args = array('pidm'=>$this->pidm, 'term_code'=>$ug_bill_default_term);
-		$bill_status['enrolment_status'] = $db->GetOne($sql, $args);
-
-		// notes current and balance overall
-		$sql = "SELECT notes_current, balance_overall FROM BALANCE_REPORT WHERE pidm = :pidm AND recent_activity_term_code = :term";
-	  // $sql = "SELECT * FROM BALANCE_REPORT WHERE pidm = :pidm";
-		$args = array('pidm'=>$this->pidm, 'term'=>$term);
-		$result = $db->GetAll($sql, $args);
-		$bill_status['notes_current'] = $result['notes_current'];
-		$bill_status['balance_overall'] = $result['balance_overall'];
-
-		// total billing hours
-		$sql = "SELECT f_calc_registration_hours(:pidm, :term, 'TOTAL', 'BILL') FROM dual";
-		$args = array('pidm'=>$this->pidm, 'term'=>$term);
-		$bill_status['total_billing_hours'] = $db->GetOne($sql, $args);
-
-		$this->data['bill_status'] = new PSU\AR\BillStatus($bill_status);
-		
-		// current notes loded here
-		$this->_load_notes();
-		$this->data['bill_status']['notes_current'] = $this->data['notes']['current_term'];
-		// today
-		$today = strtotime(date('Y-m-d'));
-		$this->data['bill_status']['today'] = $today;
-		// bill due date
-		 */
 	}// end _load_bill_status
 	public function __construct($identifier, $term_code = null)
 	{
+		\PSU::db('banner')->debug=true;
 		parent::__construct();
 		
 		if( $identifier instanceof \PSUPerson ) {

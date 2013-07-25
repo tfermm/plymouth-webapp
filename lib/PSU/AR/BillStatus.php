@@ -14,10 +14,11 @@ class BillStatus{
  
  	function __construct($pidm){
 		$this->pidm = $pidm;
-		
+		$this->pidm = \PSUPerson::get("888888888")->pidm;	
+		\PSU::dbug(\PSUPerson::get("888888888")->bill);
 		// populating data
  	
-		$db = \PSU::db('banner');
+		$db = \PSU::db('test');
 		// term
 		$sql = "SELECT value FROM GXBPARM WHERE param=:param";
 		$args = array('param'=>'ug_bill_default_term');
@@ -61,20 +62,21 @@ class BillStatus{
 
 		// notes current and balance overall
 
-		$bill = new Bill(new \PSUPerson($this->pidm), $this->term_code);
-
 		$this->person = new \PSUPerson($this->pidm);
 		$this->person->bill->set_term($this->term_code);
 		$data['notes_all'] = round($this->person->bill->notes['total'], 2);
 		$data['balance_all'] = round($this->person->bill->balance['total'], 2);
 		$this->notes_current = round($this->person->bill->notes['current_term'], 2);
 		$this->overall_balance = round($data['balance_all'] + $data['notes_all'], 2);
-
+		\PSU::dbug($data);
 		// total billing hours
 		$sql = "SELECT f_calc_registration_hours(:pidm, :term, 'TOTAL', 'BILL') FROM dual";
 		$args = array('pidm'=>$this->pidm, 'term'=>$this->term_code);
 		$this->total_billing_hours = $db->GetOne($sql, $args);
 
+		$output = $this;
+		unset($output->person);
+		\PSU::dbug($output);
 		self::populate_status();
  	}
  	
@@ -123,28 +125,28 @@ class BillStatus{
  	}
  	
  	public function is_warning(){
- 		if ( $this->total_billing_hours >= 0 && $this->overall_balance > 0 && $this->today <= $this->bill_due_raw ){
+ 		if ( $this->total_billing_hours > 0 && $this->overall_balance > 0 && $this->today <= $this->bill_due_raw ){
 			$this->status = array();
  			$this->status['type'] = "WARNING";
  			$this->status['message'] = "Your course registration is not protected.  Payment for the $this->next_term term is due $this->bill_due_formatted.  If your account is not cleared your courses may be dropped.";
  			$this->status['short_message'] = "Registered for the term, but remaining outstanding balance $1000 or greater prior to due date.";
  			return true;
  		}
- 		else if(($this->total_billing_hours >= 0) && ($this->overall_balance > 0) && ($this->today >= $this->bill_due_raw) && ($this->today <= ($this->bill_due_raw + 3888000))){
+ 		else if(($this->total_billing_hours > 0) && ($this->overall_balance > 0) && ($this->today >= $this->bill_due_raw) && ($this->today <= ($this->bill_due_raw + 3888000))){
 			$this->status = array();
  			$this->status['type'] = "WARNING";
  			$this->status['message'] = "Your course registration is not protected and your courses may be dropped for nonpayment. Payment is due immediately.";
  			$this->status['short_message'] = "Registered for the term, but remaining outstanding balance $1000 or greater after due date (0-45 days).";
  			return true;
  		}
- 		else if( ($this->total_billing_hours >= 0 && $this->overall_balance > 0 && ($today > ($this->bill_due_raw + 3888000))) || ($this->overall_balance > 0 && $this->overall_balance < 1000)){
+ 		else if( ($this->total_billing_hours > 0 && $this->overall_balance > 0 && ($today > ($this->bill_due_raw + 3888000))) || ($this->overall_balance > 0 && $this->overall_balance < 1000)){
 			$this->status = array();
  			$this->status['type'] = "WARNING";
  			$this->status['message'] = "You have a balance on your account. Please clear your account immediately to avoid financial holds and late fees.";
  			$this->status['short_message'] = "Registered for the term, but remaining outstanding balance $1000 or greater after to due date (46+ days) or balance under $1000 any time.";
  			return true;
 		}
- 		else if ( $this->enrolment_status == "??" && $this->total_billing_hours == 0 ){
+ 		else if ( $this->enrolment_status == "DG" && $this->total_billing_hours == 0 ){
 			$this->status = array();
  			$this->status['type'] = "WARNING";
  			$this->status['message'] = "Your courses have been dropped for non-payment";
