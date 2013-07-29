@@ -1074,7 +1074,6 @@ class Bill extends \BannerObject
 	}// end _load_bill_status
 	public function __construct($identifier, $term_code = null)
 	{
-		\PSU::db('banner')->debug=true;
 		parent::__construct();
 		
 		if( $identifier instanceof \PSUPerson ) {
