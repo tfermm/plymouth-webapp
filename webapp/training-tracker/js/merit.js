@@ -158,7 +158,7 @@ $(document).on('click', '.confirm', function(event){
 						if ($star.length){
 							$star.before(dogHouse);
 						}else{
-							$el.find('.name').before(dogHouse);
+							$el.find('.name').after(dogHouse);
 						}
 					}
 				}	
