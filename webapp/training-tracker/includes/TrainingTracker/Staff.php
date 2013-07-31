@@ -50,7 +50,8 @@ class Staff extends \PSU_DataObject {
 
 	public function stats($parameter = null){
 		$wpid = $this->wpid;
-		$person = \PSUPerson::get($wpid);
+		$staff_collection = new StaffCollection();
+		$person = $staff_collection->get($wpid);
 		$pidm = $person->pidm;
 		$username = $person->username;
 
@@ -58,7 +59,8 @@ class Staff extends \PSU_DataObject {
 
 		$checkboxes = \PSU::db('hr')->GetAll("SELECT * FROM person_checklist_items WHERE checklist_id=? AND response=?", array($checklist_id, "complete"));
 
-		$current_level = \PSU::db('calllog')->GetOne("SELECT user_privileges FROM call_log_employee WHERE user_name=?", array($username));
+		$current_level = $person->privileges;
+
 		$completed = sizeof($checkboxes); 
 
 		if ($current_level == 'trainee'){
@@ -71,23 +73,27 @@ class Staff extends \PSU_DataObject {
 			$search = array("25","26","27","28","29","30");
 		}
 		$stats = array();
+
 		foreach ($search as $item){
 
-			$stat = \PSU::db('hr')->GetAll("SELECT items.item_id	FROM person_checklist_items items 
-																													  JOIN person_checklists checklist 
-																													    ON items.checklist_id = checklist.id 
-																													  JOIN checklist_item_categories categories 
-																													    ON categories.type = checklist.type
-																													  JOIN checklist_items checklist_items
-																													    ON checklist_items.id = items.item_id
-																													 WHERE items.checklist_id = checklist.id 
-																													   AND checklist.type = categories.type
-																												     AND categories.id=?
-																													   AND items.response=?
-																													   AND checklist_items.category_id = categories.id
-																													   AND checklist.pidm=?", array($item,"complete", $pidm)); 
-		
-		
+			$sql = "SELECT items.item_id FROM person_checklist_items items 
+														  JOIN person_checklists checklist 
+															  ON items.checklist_id = checklist.id 
+														  JOIN checklist_item_categories categories 
+															  ON categories.type = checklist.type
+														  JOIN checklist_items checklist_items
+															  ON checklist_items.id = items.item_id
+														 WHERE items.checklist_id = checklist.id 
+															 AND checklist.type = categories.type
+															 AND categories.id=?
+															 AND items.response=?
+															 AND checklist_items.category_id = categories.id
+															 AND checklist.pidm=?"; 
+
+			$args = array($item,"complete", $pidm); 
+
+			$stat = \PSU::db('hr')->GetAll($sql, $args);
+
 			$stat = sizeof($stat);
 			if ($item == 13){
 				$stat = $stat/5;
@@ -152,7 +158,7 @@ class Staff extends \PSU_DataObject {
 				$stat = $stat/4;
 			} 
 			
-			$stats["$item"] = round(($stat*100), 2);
+			$stats[$item] = round(($stat*100), 2);
 		}
 
 		$total = 0;

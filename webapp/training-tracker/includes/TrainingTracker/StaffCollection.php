@@ -18,37 +18,88 @@ class StaffCollection extends \PSU\Collection {
 	public function __construct(){
 	}
 
-	public function get(){
-		// Load API
-		$client = \PSU::api('backend');
-		// Get all of the people that work at the helpdesk.
-		$users = $client->get('support/users');
-		return $users;
+	public function get($wpid = null){
+
+		$query = new \PSU\Population\Query\IDMAttribute('training_tracker', 'role', 'psc1');
+		$factory = new \PSU_Population_UserFactory_PSUPerson;
+		$population= new \PSU_Population( $query, $factory );
+		$population->query();
+		
+		if (!$wpid){
+			$users = array();
+
+			foreach ($population->matches as $match){
+
+				$temp['wpid'] = $match;
+				$person = \PSUPerson::get($temp['wpid']);
+				$temp['pidm'] = $person->pidm;
+				$temp['authz'] = \PSU::get('idmobject')->loadAuthZ($temp['pidm']);
+				$trainee = "calllog_trainee";
+				$supervisor = "calllog_supervisor";
+				$shift_leader = "calllog_shift_leader";
+
+				if ($temp['authz']['permission'][$trainee]){
+					$temp['privileges'] = 'trainee';
+				}
+				else if ($temp['authz']['permission'][$shift_leader]){
+					$temp['privileges'] = 'sta';
+				}
+				else if ($temp['authz']['permission'][$supervisor]){
+					$temp['privileges'] = 'shift_leader';
+				}
+
+				$temp['username'] = $person->username;
+				$temp['name'] = $person->formatName("F L");
+
+				array_push($users, $temp);
+			}
+
+			return $users;	
+		}
+		else{
+			foreach ($population->matches as $match){
+				if ($wpid == $match){
+
+					$temp['wpid'] = $match;
+					$person = \PSUPerson::get($temp['wpid']);
+					$temp['pidm'] = $person->pidm;
+					$temp['authz'] = \PSU::get('idmobject')->loadAuthZ($temp['pidm']);
+					$trainee = "calllog_trainee";
+					$supervisor = "calllog_supervisor";
+					$shift_leader = "calllog_shift_leader";
+
+					if ($temp['authz']['permission'][$trainee]){
+						$temp['privileges'] = 'trainee';
+					}
+					else if ($temp['authz']['permission'][$shift_leader]){
+						$temp['privileges'] = 'sta';
+					}
+					else if ($temp['authz']['permission'][$supervisor]){
+						$temp['privileges'] = 'shift_leader';
+					}
+
+					$temp['username'] = $person->username;
+					$temp['name'] = $person->formatName("F L");
+
+					return new Staff($temp);
+
+				}
+			}
+
+			return null;
+
+		}
 	}//end get
 
 	// mentees. selects the trainee and sta permission from callog
 	public function mentees($person = null){
+
 		if ( ! $person ){
 			$person = $this->getIterator();
 		}//end if
+
 		return new MenteeFilterIterator( $person );
 	}//end mentees
-
-	// valid users have callog permissions and are active
-	public function valid_users($person = null){
-		if ( ! $person ){
-			$person = $this->getIterator();
-		}//end if
-		return new ValidUserFilterIterator( $person );
-	}//end staff_filter
-
-	// filter for admins, people with jr. shift supervisors or greater
-	public function admins($person = null){
-		if ( ! $person ){
-			$person = $this->getIterator();
-		}//end if
-		return new AdminFilterIterator( $person );
-	}//end staff
 
 	// filter for trainee, sta and shift_leader callog permissions
 	public function staff($person = null){
@@ -65,6 +116,7 @@ class StaffCollection extends \PSU\Collection {
 			return new MentorFilterIterator( $person );
 	}//end mentors
 
+	// Mentees and Mentors
 	public function merit_users($person = null){
 			if ( ! $person ){
 				$person = $this->getIterator();
@@ -72,6 +124,7 @@ class StaffCollection extends \PSU\Collection {
 			return new MeritFilterIterator( $person );
 	}//end mentors
 
+	// People that are below the supervisor level
 	public function promotion_users($person = null){
 			if ( ! $person ){
 				$person = $this->getIterator();

@@ -6,7 +6,7 @@ class MentorFilterIterator extends \PSU_FilterIterator {
 	public function accept() {
 		$mentor = $this->current();
 
-		return 'shift_leader' == $mentor->privileges || 'supervisor' == $mentor->privileges;
+		return $mentor->authz['permission']['training_tracker_mentor'];
 	}//end accept
 }//end class
 

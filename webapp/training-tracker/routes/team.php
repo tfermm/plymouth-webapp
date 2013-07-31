@@ -11,12 +11,9 @@ respond( 'GET', '/builder', function( $request, $response, $app ) {
 
 	$wpid = $app->user->wpid;
 
-	$staff_collection = new TrainingTracker\StaffCollection();
-	$staff_collection->load();
-
 	//getting all the mentors and mentees at the help desk.
-	$mentors = $staff_collection->mentors();
-	$mentees = $staff_collection->mentees();
+	$mentors = $app->staff_collection->mentors();
+	$mentees = $app->staff_collection->mentees();
 
 	foreach ($mentees as $mentee){
 	 	$teams = $mentee->team();
@@ -68,6 +65,26 @@ respond( 'POST', '/builder', function( $request, $responce, $app ) {
 	}
 });
 
+
+respond( 'POST', '/remove', function( $request, $responce, $app ) {
+	$wpid = $request->data['wpid'];
+	$type = $request->data['type'];
+
+	$args = array($wpid);
+	if ($type == "mentor"){
+		$sql = "DELETE FROM teams WHERE mentor = ?";
+		\PSU::db('hr')->Execute($sql, $args);	
+		return true;
+	}
+	else if ($type == "mentee"){
+		$sql = "DELETE FROM teams WHERE mentee = ?";
+		return true;
+	}
+	else{
+		return false;
+	}
+
+});
 //view teams
 respond( 'GET', '/list/[:wpid]', function( $request, $responce, $app ) {
 	

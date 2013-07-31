@@ -1,7 +1,7 @@
 <?php
 
 namespace TrainingTracker;
-
+// TODO: remove this file
 class ValidUserFilterIterator extends \PSU_FilterIterator {
 	public function accept() {
 		$staff = $this->current();

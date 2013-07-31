@@ -6,7 +6,7 @@ class MeritFilterIterator extends \PSU_FilterIterator {
 	public function accept() {
 		$staff = $this->current();
 
-		return 'trainee' == $staff->privileges || 'sta' == $staff->privileges || 'shift_leader' == $staff->privileges || 'supervisor' == $staff->privileges;
+		return $staff['authz']['permission']['training_tracker_mentee'] || $staff['authz']['permission']['training_tracker_mentor'];
 	}//end accept
 
 }//end 

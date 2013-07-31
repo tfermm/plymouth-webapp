@@ -36,79 +36,44 @@ IDMObject::authN();
 //Catch all
 respond( function( $request, $response, $app ) {
 	// get the logged in user
+
 	$app->user = PSUPerson::get( $_SESSION['wp_id'] ); 
 
-	$memcache = new \PSUMemcache('training-tracker_teams');
-	if ( ! ($cached_results = $memcache->get('is_admin'))){
-
-		$staff_collection = new TrainingTracker\StaffCollection();
-		$staff_collection->load(); 
-		$valid_users = $staff_collection->valid_users();
-
-		$is_valid = false;
-		$is_mentor = false;
-		$is_admin = false;
-		foreach ($valid_users as $user){
-			if ($app->user->wpid == $user->wpid){
-				$is_valid = true;
-			}
-		}	
-
-		if (!$is_valid){
-			die('You do not have access to this app.');
-		}
-
-		$teams_data = TrainingTracker::get_teams();
-
-		$has_team = false;
-		$wpid = $app->user->wpid;
-		if (isset($teams_data["$wpid"])){
-			$has_team = true;
-		}
-
-		$admins = $staff_collection->admins();
-		$mentors = $staff_collection->mentors();
-
-		foreach ($admins as $admin){
-			if ($app->user->wpid == $admin->wpid){
-				$is_admin = true;
-				$is_mentor = true;
-			}
-		}
-		if (!$is_mentor){
-			foreach ($mentors as $mentor){
-				if ($app->user->wpid == $mentor->wpid){
-					$is_mentor = true;
-				}
-			}
-		}
-
-		$active_user_parameters['wpid'] = $wpid;
-		$active_user = new TrainingTracker\Staff($active_user_parameters);
-
-		$memcache->set( 'active_user', $active_user, MEMCACHE_COMPRESSED, 60 * 5 );
-		$memcache->set( 'has_team', $has_team, MEMCACHE_COMPRESSED, 60 * 5 );
-		$memcache->set( 'is_admin', $is_admin, MEMCACHE_COMPRESSED, 60 * 5 );
-		$memcache->set( 'is_mentor', $is_mentor, MEMCACHE_COMPRESSED, 60 * 5 );
-		$memcache->set( 'is_valid', $is_valid, MEMCACHE_COMPRESSED, 60 * 5 );
-
+	if(IDMObject::authZ('role', 'training_tracker')) {
+		$is_valid = true;
 	}
 	else{
-
-		$active_user = $memcache->get('active_user');
-		$has_team = $memcache->get('has_team');
-		$is_admin = $memcache->get('is_admin');
-		$is_mentor = $memcache->get('is_mentor');
-		$is_valid = $memcache->get('is_mentor');
+		die("You do not have access to this application.");
 	}
 
-	if (!$is_valid){
-		die('You do not have access to this app.');
+	$staff_collection = new TrainingTracker\StaffCollection();
+	$staff_collection->load(); 
+
+	$is_mentor = false;
+	$is_admin = false;
+
+	$teams_data = TrainingTracker::get_teams();
+
+	$has_team = false;
+	$wpid = $app->user->wpid;
+	if (isset($teams_data["$wpid"])){
+		$has_team = true;
 	}
 
-	$app->active_user = $active_user;
+	if(IDMObject::authZ('permission', 'training_tracker_admin')) {
+		$is_admin = true;
+	}
+	if(IDMObject::authZ('permission', 'training_tracker_mentor')) {
+		$is_mentor = true;
+	}
+
+	$active_user = $staff_collection->get($wpid);
+
 	$app->is_admin = $is_admin;
 	$app->is_mentor = $is_mentor;
+	$app->staff_collection = $staff_collection;
+	$app->active_user = $active_user;
+
 	// initialize the template
 	$app->tpl = new PSUTemplate;
 
@@ -124,22 +89,16 @@ respond( function( $request, $response, $app ) {
 
 // the person select page
 respond( '/?', function( $request, $response, $app ) {
-
 	if ($app->is_mentor){
-		$staff_collection = new TrainingTracker\StaffCollection();
-		$staff_collection->load();
-
-		$staff = $staff_collection->staff();
+		$staff = $app->staff_collection;
 	}
 	else{
-		$current_user_parameter["wpid"] = $app->user->wpid;
-		$person = new TrainingTracker\Staff($current_user_parameter);
-		$person->privileges = TrainingTracker::get_user_level($person->wpid);
+		$person = $app->active_user;
 		$staff[0] = $person;
 	}
 
 	foreach ($staff as $person){
-		$pidm = $person->person()->pidm;
+		$pidm = $person->pidm;
 		
 		$person->merit = TrainingTracker::merit_get($pidm);
 		$person->demerit = TrainingTracker::demerit_get($pidm);

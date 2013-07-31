@@ -6,7 +6,7 @@ class AdminFilterIterator extends \PSU_FilterIterator {
 	public function accept() {
 		$staff = $this->current();
 
-		return 'manager' == $staff->privileges || 'supervisor' == $staff->privileges || 'webguru' == $staff->privileges;
+		return $staff['authz']['permission']['training_tracker_admin'];
 	}//end accept
 }//end 
 

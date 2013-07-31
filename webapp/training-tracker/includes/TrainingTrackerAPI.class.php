@@ -41,7 +41,6 @@ class TrainingTracker{
 		$updated = PSU::db('hr')->Execute($sql, array(0, $type, $pidm));
 	}
 
-
 	public function checklist_insert($indentifier, $type){
 		$pidm = \PSUPerson::get($indentifier)->pidm;
 		$sql = "INSERT INTO person_checklists (type, pidm, closed) VALUES (?, ?, ?)";
@@ -131,64 +130,56 @@ class TrainingTracker{
 		return $pay_info;
 	}
 
-
-	public function get_user_level($wpid){
-
-		$username = \PSUPerson::get($wpid)->username;
-		$sql = "SELECT user_privileges FROM call_log_employee WHERE user_name=?";
-		$user_level = PSU::db('calllog')->GetOne($sql, array($username));
-		
-		return $user_level;
-
-	}	
-
 	public function set_user_level($wpid, $permission){
+		// TODO: update to work with APE permissions
+/*	
 		$sql = "UPDATE call_log_employee SET user_privileges=? WHERE user_name=?";
 		PSU::db('calllog')->Execute($sql, array($permission, PSUPerson::get($wpid)->username));
+*/
 	}
 
 	public function get_teams($key = null, $type = null){
-		$memcache = new \PSUMemcache('training-tracker_teams');
-		if (!$key and !$type){
+		if (!$key && !$type){
 
-			if ( ! ($cached_results = $memcache->get('teams'))){
+			$teams = array();
+			// get all the mentors from the database
+			$sql = "SELECT DISTINCT mentor FROM teams";
+			$mentors = \PSU::db('hr')->GetAll($sql);
 
-				$teams = array();
-				// get all the mentors from the database
-				$sql = "SELECT DISTINCT mentor FROM teams";
-				$mentors = \PSU::db('hr')->GetAll($sql);
+			foreach ($mentors as $mentor){
+				$sql = "SELECT * FROM teams WHERE mentor = ?";
+				$wpid = $mentor['mentor'];
+				$team = \PSU::db('hr')->GetAll($sql, array($wpid));
 
-				foreach ($mentors as $mentor){
-					$sql = "SELECT * FROM teams WHERE mentor = ?";
-					$wpid = $mentor['mentor'];
-					$team = \PSU::db('hr')->GetAll($sql, array($wpid));
-
-					foreach($team as $people){
-						$mentee_wpid = $people['mentee'];
-						$mentee = \PSUPerson::get($mentee_wpid)->formatName("f l");
-						$mentor_wpid = $people['mentor'];
-						$mentor_name = PSUPerson::get($mentor_wpid)->formatName("f l");
-						$teams["$wpid"]["mentor"]['mentor_name'] = PSUPerson::get($mentor_wpid)->formatName("f l");
-						$teams["$wpid"]["mentor"]['mentor_wpid'] = $mentor_wpid;
-						$teams["$wpid"]["$mentee_wpid"]['mentor_name'] = PSUPerson::get($mentor_wpid)->formatName("f l");
-						$teams["$wpid"]["$mentee_wpid"]["mentor_wpid"] = $mentor_wpid;
-						$teams["$wpid"]["$mentee_wpid"]["name"] = PSUPerson::get($mentee_wpid)->formatName("f l");
-						$teams["$wpid"]["$mentee_wpid"]["wpid"] = $mentee_wpid;
-					}
-					
+				foreach($team as $people){
+					$mentee_wpid = $people['mentee'];
+					$mentee = \PSUPerson::get($mentee_wpid)->formatName("f l");
+					$mentor_wpid = $people['mentor'];
+					$mentor_name = PSUPerson::get($mentor_wpid)->formatName("f l");
+					$teams["$wpid"]["mentor"]['mentor_name'] = PSUPerson::get($mentor_wpid)->formatName("f l");
+					$teams["$wpid"]["mentor"]['mentor_wpid'] = $mentor_wpid;
+					$teams["$wpid"]["$mentee_wpid"]['mentor_name'] = PSUPerson::get($mentor_wpid)->formatName("f l");
+					$teams["$wpid"]["$mentee_wpid"]["mentor_wpid"] = $mentor_wpid;
+					$teams["$wpid"]["$mentee_wpid"]["name"] = PSUPerson::get($mentee_wpid)->formatName("f l");
+					$teams["$wpid"]["$mentee_wpid"]["wpid"] = $mentee_wpid;
+					$mentees_list[$mentee_wpid] = true;
 				}
+				
+			}
+							
+			$staff_collection = new TrainingTracker\StaffCollection();
+			$staff_collection->load(); 
 
-				$sql = "SELECT p.wpid, CONCAT( p.name_first_formatted,  ' ', p.name_last_formatted ) AS name
-								FROM call_log_employee e
-								RIGHT OUTER JOIN phonebook.phonebook p ON p.username = e.user_name
-								LEFT OUTER JOIN hr.teams t ON t.mentee = p.wpid
-								WHERE e.status =  ?
-								AND t.mentee IS NULL 
-								AND e.user_privileges
-								IN (?,  ?)
-								ORDER BY p.name_last_formatted, p.name_full ASC";
+			$unassigned = array();
+			foreach ($staff_collection->mentees() as $mentee){
+				$mentee_wpid = $mentee->wpid;
+				if ( ! $mentees_list[$mentee_wpid] ){
+					$name = $mentee->name;
+					array_push($unassigned, array('wpid'=>$mentee_wpid,'name'=>$name));
+				}
+			}
 
-				$unassigned = PSU::db('calllog')->GetAll($sql, array("active", 'trainee', 'sta'));
+			if ($unassigned){
 				foreach ($unassigned as $loner){
 					$loner_wpid = $loner['wpid'];
 					$teams["unassigned"]["mentor"]["mentor_name"] = "Unassigned";
@@ -198,70 +189,36 @@ class TrainingTracker{
 					$teams["unassigned"]["$loner_wpid"]["name"] = $loner['name'];
 					$teams["unassigned"]["$loner_wpid"]["wpid"] = $loner['wpid'];
 				}
-
-				$memcache->set( 'teams', $teams, MEMCACHE_COMPRESSED, 60 * 5);
-				$team_array = $memcache->get('teams');
 			}
-			else{
-				$team_array = $memcache->get('teams');
-			}
+			$team_array = $teams;
 		}
 		else{
 			if (!$type){
-				if ( ! ($cached_results = $memcache->get("teams-all-$key"))){
-					$sql = "SELECT * FROM teams WHERE mentor = ? OR mentee = ?";
-					$team_array = \PSU::db('hr')->GetAll($sql, array($key, $key));
-					$memcache->set( "teams-all-$key", $team_array, MEMCACHE_COMPRESSED, 60 * 5);
-					$team_array = $memcache->get("teams-all-$key");
-				}
-				else{
-					$team_array = $memcache->get("teams-all-$key");
-				}
+				$sql = "SELECT * FROM teams WHERE mentor = ? OR mentee = ?";
+				$team_array = \PSU::db('hr')->GetAll($sql, array($key, $key));
 			}
 			else{
-					// get all where key matches the type
-					$sql = "SELECT * FROM teams WHERE $type = ?";
-					$team_array = \PSU::db('hr')->GetAll($sql, array($key));
-					$memcache->set( "teams-$key", $team_array, MEMCACHE_COMPRESSED, 60 * 5);
-					$team_array = $memcache->get("teams-$key");
+				// get all where key matches the type
+				$sql = "SELECT * FROM teams WHERE $type = ?";
+				$team_array = \PSU::db('hr')->GetAll($sql, array($key));
 			}
-			 				
 		}
 		return $team_array;
 	}
 
 	public function team_set_mentee($mentee, $mentor){
 
-		$memcache = new \PSUMemcache('training-tracker_teams');
-		$memcache->delete("teams");
-		$memcache->delete("teams-all-$mentee");
-		$memcache->delete("teams-all-$mentor");
-		$memcache->delete("teams-$mentee");
-		$memcache->delete("teams-$mentor");
-
 		$sql = "UPDATE teams SET mentor=? WHERE mentee = ?";
 		$result = PSU::db('hr')->Execute($sql, array($mentor, $mentee));
 	}
 
 	public function team_insert($mentee, $mentor){
-
-		$memcache = new \PSUMemcache('training-tracker_teams');
-		$memcache->delete("teams");
-		$memcache->delete("teams-all-$mentee");
-		$memcache->delete("teams-all-$mentor");
-		$memcache->delete("teams-$mentee");
-		$memcache->delete("teams-$mentor");
 		
 		$sql = "INSERT INTO teams (mentor, mentee) VALUES ( ?, ?)";
 		$result = PSU::db('hr')->Execute($sql, array($mentor, $mentee));
 	}
 
-	public function team_delete($mentee){
-
-		$memcache = new \PSUMemcache('training-tracker_teams');
-		$memcache->delete("teams");
-		$memcache->delete("teams-all-$mentee");
-		$memcache->delete("teams-$mentee");
+	public function team_delete($mentee, $type="mentee"){
 
 		$sql = "DELETE FROM teams WHERE mentee = ?";
 		$result3 = PSU::db('hr')->Execute($sql, array($mentee));

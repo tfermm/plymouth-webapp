@@ -1,10 +1,11 @@
 <?php
+
 //the axax post part for checklist check boxes 
 respond('POST', '/checklist/checkbox', function( $request, $responce, $app ) {
 	$checked_id = $request->data['checkboxId'];
 	if (preg_match('/^\\d{1,3}$/', $checked_id)){
 		$wpid = $request->data['wpid'];
-		if (TrainingTracker::valid_wpid($wpid)){
+		if (TrainingTracker::valid_wpid($wpid) && $wpid != $app->user->wpid && $app->is_mentor){
 			$response = $request->data['response'];
 
 			$person = PSUPerson::get($wpid);
@@ -14,7 +15,6 @@ respond('POST', '/checklist/checkbox', function( $request, $responce, $app ) {
 			$checklist_id = TrainingTracker::get_checklist_id($pidm);
 			
 			if (!TrainingTracker::checkbox_exists($checked_id, $checklist_id)){
-
 				TrainingTracker::checkbox_insert($checked_id, $checklist_id, $response, $_SESSION['pidm']);
 			}
 			else{
@@ -57,7 +57,7 @@ respond('POST', '/checklist/comments/[:wpid]', function( $request, $responce, $a
 		}
 		else if ($_POST['name'] == 'confirm'){
 
-			$current_user_level = TrainingTracker::get_user_level($wpid);
+			$current_user_level = $app->staff_collection->get($wpid)->privileges;
 
 			$people['active'] = $app->user;
 
@@ -77,6 +77,10 @@ respond('POST', '/checklist/comments/[:wpid]', function( $request, $responce, $a
 
 //promote/demote ajax page
 respond('POST', '/fate', function( $request, $response, $app ) {
+
+	if (!$app->is_admin){
+		die('You do not have access to this page.');
+	}
 
 	$permission = $request->data['permission'];
 	$wpid = $request->data['wpid'];
@@ -107,16 +111,11 @@ respond( 'GET', '/fate', function( $request, $response, $app ) {
 		die('You do not have access to this page.');
 	}
 
-	$staff_collection = new TrainingTracker\StaffCollection();
-	$staff_collection->load(); 
-
-	$staff = $staff_collection->promotion_users();
-	foreach ($staff as $person){
-		$permission	= TrainingTracker::get_user_level($person->wpid);
-		$person->permission_slug = $permission;
-		$person->permission = TrainingTracker::level_translation($permission);
+	foreach ($app->staff_collection as &$person){
+		$person->permission_slug = $person->privileges;
+		$person->permission = TrainingTracker::level_translation($person->privileges);
 	}
-	$app->tpl->assign('staff', $staff);
+	$app->tpl->assign('staff', $staff_collection);
 	$app->tpl->display('admin.tpl');
 });
 
@@ -130,12 +129,15 @@ respond( 'GET', '/statistics/[:wpid]', function( $request, $responce, $app ) {
 		$responce->redirect('../../');
 	}
 
-	$current_user_parameter['wpid'] = $wpid;
-	$current_user = new TrainingTracker\Staff($current_user_parameter);
-	$current_user_level = TrainingTracker::get_user_level($current_user->wpid);
+	if ( !$app->is_mentor && $wpid != $app->user->wpid){
+		die('You do not have access to this page.');
+	}
 
-	$active_user_level = TrainingTracker::get_user_level($app->user->wpid);
-	$checklist_id = TrainingTracker::get_checklist_id($current_user->person()->pidm);
+	$current_user = $app->staff_collection->get($wpid);
+	$current_user_level = $current_user->privileges;
+
+	$active_user_level = $app->active_user;
+	$checklist_id = TrainingTracker::get_checklist_id($current_user->pidm);
 
 	if (strlen($checklist_id) > 2){
 		 //get the data for which check boxes are checked
@@ -143,6 +145,7 @@ respond( 'GET', '/statistics/[:wpid]', function( $request, $responce, $app ) {
 
 		 // TODO: Y U NO USE FOREACH( $something as &$item ) by reference?
 		// yes
+
 		$tooltip = array();
 		foreach ($checklist_checked as &$checked){
 			$item_id = $checked['item_id'];
@@ -168,10 +171,8 @@ respond( 'GET', '/statistics/[:wpid]', function( $request, $responce, $app ) {
 	//getting comments
 	$comments = TrainingTracker::get_comments($checklist_id);
 
-	$staff_collection = new TrainingTracker\StaffCollection(); //get the people that work at the helpdesk
-	$staff_collection->load(); 
-	$mentor = $staff_collection->mentors();//select all the mentors
-	$mentee = $staff_collection->mentees();//select all the mentees
+	$mentor = $app->staff_collection->mentors();//select all the mentors
+	$mentee = $app->staff_collection->mentees();//select all the mentees
 
 	//populating some variables to generate the checklist.
 	
@@ -221,13 +222,21 @@ respond( 'GET', '/statistics/[:wpid]', function( $request, $responce, $app ) {
 
 
 respond( 'POST', '/merit/remove', function( $request, $responce, $app ) {
-	
+
+	if (!$app->is_admin){
+		die('You do not have access to this page.');
+	}
+
 	$id = $request->data['id'];
 	TrainingTracker::merit_remove($id);
 
 });
 
 respond( 'POST', '/merit', function( $request, $responce, $app ) {
+
+	if (!$app->is_admin){
+		die('You do not have access to this page.');
+	}
 
 	$type = $request->data['type'];
 	$comments = $request->data['comments'];
@@ -240,7 +249,7 @@ respond( 'POST', '/merit', function( $request, $responce, $app ) {
 				$checklist_id = TrainingTracker::get_checklist_id($wpid);
 				// If they don't have a checklist, most likely a mentor
 				if (!$checklist_id){
-					$user_type = TrainingTracker::level_translation(TrainingTracker::get_user_level($wpid)); 
+					$user_type = TrainingTracker::level_translation($app->active_user->privileges); 
 					TrainingTracker::checklist_insert($wpid, $user_type);					
 					$checklist_id = TrainingTracker::get_checklist_id($wpid);
 				}
@@ -268,10 +277,11 @@ respond( 'POST', '/merit', function( $request, $responce, $app ) {
 
 respond( 'GET', '/merit', function( $request, $responce, $app ) {
 
-	$staff_collection = new TrainingTracker\StaffCollection();
-	$staff_collection->load();
+	if (!$app->is_admin){
+		die('You do not have access to this page.');
+	}
 
-	$staff = $staff_collection->merit_users();
+	$staff = $app->staff_collection;
 
 	foreach ($staff as $person){
 		$merits[$person->wpid]['merits'] = TrainingTracker::merit_get($person->wpid);

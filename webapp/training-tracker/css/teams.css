@@ -2,15 +2,27 @@
 	min-height: 500px
 }
 
+.chzn-select{
+	width: 95%;
+}
+
 .connectedSortable {
 	box-sizing: content-box;
+	margin: 1em 0em 1em 0em;
 }
+
+.delete span {
+	color: #C43C35;
+}
+
+.delete:hover span {
+	color: #b00000;
+}
+
 .dropdown-box{
 	margin: 1em 0em 1em 0em;
 }
-.connectedSortable{
-	margin: 1em 0em 1em 0em;
-}
+
 .team{ 
 	list-style-type: none; 
 	margin: .5em 0em .5em 0em;
@@ -19,10 +31,7 @@
 	padding: 1em; 
 	width: 90%;
 }
-.ui-state-highlight{
-	margin: .5em 0em .5em .25em !important;
-	padding: 1em !important; 
-}
+
 .team li { 
 	margin: 5px; 
 	padding: 5px; 
@@ -33,10 +42,6 @@
 	min-height: 500px;
 
 }
-.chzn-select{
-	width: 95%;
-}
-
 .styled li{
 	margin-left: 0px;
 }
@@ -59,3 +64,7 @@
 	box-sizing:         content-box !important;	
 }
 
+.ui-state-highlight{
+	margin: .5em 0em .5em .25em !important;
+	padding: 1em !important; 
+}

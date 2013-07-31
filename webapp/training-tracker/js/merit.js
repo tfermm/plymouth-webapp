@@ -143,8 +143,8 @@ $(document).on('click', '.confirm', function(event){
 						if ($dogHouse.length){
 							$star.after(star);
 						}else{
-							// If there are no merits associated with this person insert it before their name
-							$el.find('.name').before(star);
+							// If there are no merits associated with this person insert it after their name
+							$el.find('.name').after(star);
 						}
 					}
 				}
