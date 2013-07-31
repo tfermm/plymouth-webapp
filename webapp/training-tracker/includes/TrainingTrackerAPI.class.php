@@ -44,7 +44,7 @@ class TrainingTracker{
 	public function checklist_insert($indentifier, $type){
 		$pidm = \PSUPerson::get($indentifier)->pidm;
 		$sql = "INSERT INTO person_checklists (type, pidm, closed) VALUES (?, ?, ?)";
-		$inserted = PSU::db('hr')->Execute($sql, array($type, $pidm, 0));
+		// $inserted = PSU::db('hr')->Execute($sql, array($type, $pidm, 0));
 		return true;
 	}
 
