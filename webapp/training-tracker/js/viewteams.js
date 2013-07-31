@@ -13,7 +13,7 @@ $(document).on('click', '.delete', function(event){
 		dataType: 'json',
 		success: function(data) {
 			if (type == 'mentor'){
-				$el.empty();
+				$el.next('ul').empty();
 				$el.remove();		
 			}
 			else{
