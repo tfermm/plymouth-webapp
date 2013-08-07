@@ -12,7 +12,6 @@ respond( '[*]', function( $request, $response, $app ) {
 	$GLOBALS['TITLE'] = 'Bill Status';
 	 
 	$GLOBALS['TEMPLATES'] = PSU_BASE_DIR . '/app/bill-status/templates';
-	// $GLOBALS['TEMPLATES'] = $GLOBALS['BASE_DIR'] . '/templates';
 	 
 	if( file_exists( $GLOBALS['BASE_DIR'] . '/debug.php' ) ) {
 		include $GLOBALS['BASE_DIR'] . '/debug.php';

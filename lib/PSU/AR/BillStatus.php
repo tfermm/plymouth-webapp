@@ -14,9 +14,6 @@ class BillStatus{
  
  	function __construct($pidm){
 		$this->pidm = $pidm;
-		$this->pidm = \PSUPerson::get("888888888")->pidm;	
-		// \PSU::puke(\PSUPerson::get("888888888")->bill);
-		$this->pidm = 258898;
 		// populating data
  	
 		$db = \PSU::db('test');
@@ -24,7 +21,7 @@ class BillStatus{
 		$sql = "SELECT value FROM GXBPARM WHERE param=:param";
 		$args = array('param'=>'ug_bill_default_term');
 		$this->term_code = $db->GetOne($sql, $args);
-		\PSU::dbug($this->term_code);
+
 		$year = substr( $this->term_code, 0, -2 );
 		$term = substr( $this->term_code, -2 );
 
@@ -62,13 +59,8 @@ class BillStatus{
 		$this->enrolment_status = $db->GetOne($sql, $args);
 
 		// notes current and balance overall
-
 		$this->person = new \PSUPerson($this->pidm);
-		\PSU::db('banner')->debug=true;
 		$this->person->bill->set_term($this->term_code);
-		\PSU::dbug($this->person->bill->balance);
-		\PSU::db('banner')->debug=false;
-		// \PSU::puke($this->person->bill);
 		$data['notes_all'] = round($this->person->bill->notes['total'], 2);
 		$data['balance_all'] = round($this->person->bill->balance['total'], 2);
 		$this->notes_current = round($this->person->bill->notes['current_term'], 2);
@@ -79,9 +71,6 @@ class BillStatus{
 		$args = array('pidm'=>$this->pidm, 'term'=>$this->term_code);
 		$this->total_billing_hours = $db->GetOne($sql, $args);
 
-		$output = $this;
-		unset($output->person);
-		\PSU::dbug($output);
 		self::populate_status();
  	}
  	

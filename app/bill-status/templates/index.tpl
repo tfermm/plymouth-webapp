@@ -88,9 +88,6 @@
 		background: #ccc;
 		margin-top: 2em;
     border: 1px solid #ccc;
-		/*
-		float:left;
-		*/
 	}
 	#bill-status-container{
 		margin: 3px 3px 3px 3px;
@@ -121,13 +118,13 @@
 		background: none !important;
 		right: -4% !important;
 		line-height: 0.7em !important;
-		text-shadow: -1px 4px 0px rgba(255, 255, 255, 8) !important;
+		text-shadow: -1px 4px 0px #d6d6d6 !important;
 	}
 	.bill-status-icon-3 span sub{
 		background: none !important;
 		right: -8% !important;
 		line-height: 0.6em !important;
-		text-shadow: -1px 7px 0px rgba(255, 255, 255, 8), 1px 7px 0px rgba(255,255,255,8) !important;
+		text-shadow: -1px 7px 0px #d6d6d6, 1px 7px 0px #d6d6d6 !important;
 	}
 	.bill-status-2-green span sub{
     color: #468847 !important;
@@ -160,21 +157,16 @@
 <div id="bill-status-2">
 	<div id = "bill-status-container">
 		<span id="div-1">
-		
 			{if $status.type == "NOT REGISTERED" || $status.type == "ERROR"} 
 				{icon class="bill-status-icon-2 bill-status-2-red" id="ape-person" sub="ape-no" size=beefy flat=true}
 			{elseif $status.type == "WARNING"} 
-				{icon class="bill-status-icon-2 bill-status-2-green" id="ape-person" sub="ape-yes" size=beefy flat=true}
+				{icon class="bill-status-icon-2 bill-status-2-yellow" id="ape-person" sub="ape-yes" size=beefy flat=true}
 			{elseif $status.type == "PROTECTED"} 
-				{icon class="bill-status-icon-3 bill-status-2-yellow" id="ape-person" sub="warning-sign" size=beefy flat=true}
+				{icon class="bill-status-icon-3 bill-status-2-green" id="ape-person" sub="warning-sign" size=beefy flat=true}
 			{/if}
 		</span>
-
 		<p id="div-2">
 			{$status.message}
 		</p>
 	</div>
 </div>
-	{icon class="bill-status-icon-2 bill-status-2-red" id="ape-person" sub="ape-no" size=beefy flat=true}
-	{icon class="bill-status-icon-2 bill-status-2-green" id="ape-person" sub="ape-yes" size=beefy flat=true}
-	{icon class="bill-status-icon-3 bill-status-2-yellow" id="ape-person" sub="warning-sign" size=beefy flat=true}
